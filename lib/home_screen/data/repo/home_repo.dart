@@ -1,8 +1,5 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:graduation_project/API_Services/dio_provider.dart';
 import 'package:graduation_project/API_Services/endpoints.dart';
 import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_add_response.dart';
@@ -11,6 +8,7 @@ import 'package:graduation_project/home_screen/data/model/home_model_response/it
 import 'package:graduation_project/home_screen/data/model/item_model_response/Itemdatum.dart';
 import 'package:graduation_project/home_screen/data/model/offers_model_response/offers_model_response.dart';
 import 'package:graduation_project/home_screen/data/model/services_model_response/service_model.dart';
+import 'package:graduation_project/home_screen/data/model/topSelling_model_response/TopSellinModelResponse.dart';
 
 class HomeRepo {
   static Future<List<Categorydatum>> fetchCategories() async {
@@ -49,6 +47,29 @@ class HomeRepo {
     } catch (e) {
       log('Exception in fetchOffers: $e');
       throw Exception('Error fetching offers: $e');
+    }
+  }
+
+  static Future<TopSellingModelResponse> fetchTopSelling() async {
+    try {
+      var response = await DioProvider.get(
+        endpoint: "https://abdulrahmanantar.com/outbye/topselling.php",
+      );
+      print(
+          "Fetch TopSelling Status Code: ${response.statusCode}"); // حالة الـ Response
+      print(
+          "Fetch TopSelling Response: ${response.data}"); // البيانات اللي رجعت
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        print(
+            "TopSelling Data Parsed: ${TopSellingModelResponse.fromJson(response.data).items?.data?.length} items"); // عدد العناصر
+        return TopSellingModelResponse.fromJson(response.data);
+      } else {
+        throw Exception(
+            'Failed to fetch TopSelling: ${response.data['message'] ?? 'Unknown error'}');
+      }
+    } catch (e) {
+      print("Exception in fetchTopSelling: $e"); // أي خطأ في الـ API
+      throw Exception('Error fetching TopSelling: $e');
     }
   }
 
