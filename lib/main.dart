@@ -9,7 +9,7 @@ import 'package:graduation_project/auth/forget_password/check_email/check_email.
 import 'package:graduation_project/auth/forget_password/reset_password/ResetPassword.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/home_screen.dart';
 import 'package:graduation_project/home_screen/UI/Items_Page/Items_screen.dart';
-import 'package:graduation_project/home_screen/UI/Category_Page/service_for_category.dart';
+import 'package:graduation_project/home_screen/UI/Category_Page/Services_Screen.dart';
 import 'package:graduation_project/home_screen/bloc/Cart/cart_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_bloc.dart';
 import 'package:graduation_project/home_screen/data/repo/cart_repo.dart';

@@ -3,18 +3,25 @@ import 'package:graduation_project/home_screen/data/model/home_model_response/it
 import 'package:graduation_project/home_screen/data/model/item_model_response/Itemdatum.dart';
 import 'package:graduation_project/home_screen/data/model/offers_model_response/offers_model_response.dart';
 import 'package:graduation_project/home_screen/data/model/services_model_response/service_model.dart';
+import 'package:graduation_project/home_screen/data/model/topSelling_model_response/TopSellinModelResponse.dart';
 
-class HomeState {}
+abstract class HomeState {}
 
 class HomeInitialState extends HomeState {}
 
-// fetchCategories
-class FetchCategoriesLoadingState extends HomeState {}
+// Fetch Home Data
+class FetchLoadingHomeDataState extends HomeState {}
 
-class FetchCategoriesSuccessState extends HomeState {
+class FetchSuccessHomeDataState extends HomeState {
   final List<Categorydatum> categories;
+  final List<ItemModel> items;
 
-  FetchCategoriesSuccessState({required this.categories});
+  FetchSuccessHomeDataState({required this.categories, required this.items});
+}
+
+class HomeErrorState extends HomeState {
+  final String message;
+  HomeErrorState({required this.message});
 }
 
 // Fetch Offers
@@ -30,31 +37,36 @@ class FetchOffersErrorState extends HomeState {
   FetchOffersErrorState({required this.message});
 }
 
-// fetchDiscountedItems
+// Fetch Top Selling
+class FetchTopSellingLoadingState extends HomeState {}
+
+class FetchTopSellingSuccessState extends HomeState {
+  final List<TopSellingData> topSelling;
+  FetchTopSellingSuccessState({required this.topSelling});
+}
+
+class FetchTopSellingErrorState extends HomeState {
+  final String message;
+  FetchTopSellingErrorState({required this.message});
+}
+
+// Fetch Categories
+class FetchCategoriesLoadingState extends HomeState {}
+
+class FetchCategoriesSuccessState extends HomeState {
+  final List<Categorydatum> categories;
+  FetchCategoriesSuccessState({required this.categories});
+}
+
+// Fetch Discounted Items
 class FetchDiscountItemsLoadingState extends HomeState {}
 
 class FetchDiscountItemsSuccessState extends HomeState {
   final List<ItemModel> items;
-
   FetchDiscountItemsSuccessState({required this.items});
 }
 
-// fetchHomeData
-class FetchLoadingHomeDataState extends HomeState {}
-
-class FetchSuccessHomeDataState extends HomeState {
-  final List<Categorydatum> categories;
-  final List<ItemModel> items;
-
-  FetchSuccessHomeDataState({required this.categories, required this.items});
-}
-
-class HomeErrorState extends HomeState {
-  String message;
-  HomeErrorState({required this.message});
-}
-
-// fetchServicesByCategory
+// Fetch Services By Category
 class FetchServicesLoadingState extends HomeState {}
 
 class FetchServicesSuccessState extends HomeState {
@@ -67,7 +79,7 @@ class FetchServicesErrorState extends HomeState {
   FetchServicesErrorState({required this.message});
 }
 
-//Fetch Items in each Categoty
+// Fetch Service Items
 class FetchServiceItemsLoadingState extends HomeState {}
 
 class FetchServiceItemsSuccessState extends HomeState {

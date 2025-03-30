@@ -584,7 +584,7 @@ import 'dart:async';
 // import 'package:graduation_project/theme/theme.dart';
 // import 'package:graduation_project/home_screen/ui/home_page/homewidgets.dart';
 // // import 'package:graduation_project/home_screen/ui/home_page/homevariables.dart';
-// import 'package:graduation_project/home_screen/ui/category_page/service_for_category.dart';
+// import 'package:graduation_project/home_screen/ui/category_page/Services_Screen.dart';
 // import 'package:graduation_project/home_screen/data/model/home_model_response/home_model_response.dart';
 // import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

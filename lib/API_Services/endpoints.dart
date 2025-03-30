@@ -8,7 +8,8 @@ class AppEndpoints {
 
   //Home
   static const String fetchHome = "home.php";
-  static const String offersSLider = "offers.php";
+  static const String offersSlider = "offers.php";
+  static const String topSelling = "topselling.php";
 
   //Services
   static const String fetchService = "services/services.php";
@@ -24,4 +25,8 @@ class AppEndpoints {
 
   //Profile
   static const String profileView = "profile/view.php";
+
+  //Search
+  //static const String search = "items/search.php";
+
 }

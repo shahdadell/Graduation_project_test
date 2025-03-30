@@ -7,6 +7,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitialState()) {
     on<FetchHomeDataEvent>(fetchHomeData);
     on<FetchOffersEvent>(fetchOffers);
+    on<FetchTopSellingEvent>(fetchTopSelling);
     on<FetchCategoriesEvent>(fetchCategories);
     on<FetchDiscountEvent>(fetchDiscountedItems);
     on<FetchServicesEvent>(fetchServicesByCategory);
@@ -30,9 +31,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(FetchOffersLoadingState());
     try {
       final offersResponse = await HomeRepo.fetchOffers();
-      emit(FetchOffersSuccessState(offers: offersResponse.data));
+      emit(FetchOffersSuccessState(offers: offersResponse.data ?? []));
     } catch (e) {
       emit(FetchOffersErrorState(message: e.toString()));
+    }
+  }
+
+  Future<void> fetchTopSelling(
+      FetchTopSellingEvent event, Emitter<HomeState> emit) async {
+    print("FetchTopSellingEvent Started");
+    emit(FetchTopSellingLoadingState());
+    try {
+      final topSellingResponse = await HomeRepo.fetchTopSelling();
+      final topSellingItems = topSellingResponse.items?.data ?? [];
+      print(
+          "FetchTopSellingEvent Succeeded with ${topSellingItems.length} items");
+      emit(FetchTopSellingSuccessState(topSelling: topSellingItems));
+    } catch (e) {
+      print("FetchTopSellingEvent Failed: $e");
+      emit(FetchTopSellingErrorState(message: e.toString()));
     }
   }
 
@@ -65,7 +82,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final services = await HomeRepo.fetchServicesByCategory(event.categoryId);
       emit(FetchServicesSuccessState(services: services));
     } catch (e) {
-      emit(HomeErrorState(message: e.toString()));
+      emit(FetchServicesErrorState(message: e.toString()));
     }
   }
 

@@ -4,7 +4,6 @@ import 'package:graduation_project/Profile_screen/UI/profile_screen.dart';
 import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/app_images/app_images.dart';
 import 'package:graduation_project/home_screen/UI/Cart_Page/CartScreen.dart';
-import 'package:graduation_project/home_screen/UI/Home_Page/decortion.dart';
 import 'package:graduation_project/Theme/style.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/homevariables.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
@@ -143,18 +142,6 @@ Widget homeTopBar(BuildContext context) {
   );
 }
 
-Widget searchField(double w) {
-  return Container(
-    margin: EdgeInsets.only(top: 10, right: w * .02, bottom: 20, left: 10),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(32),
-      color: MyTheme.grayColor3,
-    ),
-    child: TextFormField(
-      decoration: searchFieldDecoration(),
-    ),
-  );
-}
 
 Widget carouselSliderImage(String image) {
   return ClipRRect(
@@ -186,9 +173,7 @@ Widget horizontalListTitle(String text) {
   );
 }
 
-Widget horizontalList(
-  List list,
-) {
+Widget horizontalList(List list,) {
   return Container(
     height: 220,
     margin: const EdgeInsets.only(
@@ -287,9 +272,7 @@ Widget horizontalList(
   );
 }
 
-Widget horizontalDishesList(
-  List list,
-) {
+Widget horizontalDishesList(List list,) {
   return Container(
     height: 220,
     margin: const EdgeInsets.only(
