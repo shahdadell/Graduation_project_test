@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/Theme/theme.dart';
@@ -6,8 +7,6 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
   double originalPrice = (item.itemsPrice ?? 0.0).toDouble();
   double discount = (item.itemsDiscount ?? 0) / 100;
   double discountedPrice = originalPrice * (1 - discount);
-
-  // بيانات من الـ ItemModel
   String restaurantName = item.serviceName ?? 'Unknown Restaurant';
   double rating = item.serviceRating ?? 0.0;
   String phoneNumber = item.servicePhone ?? 'Not Available';
@@ -44,7 +43,6 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // الصورة (ارتفاع أقل)
                 ClipRRect(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -126,7 +124,6 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                     ],
                   ),
                 ),
-                // المحتوى النصي
                 Padding(
                   padding: EdgeInsets.all(12.w), // padding أقل
                   child: Column(
@@ -136,26 +133,25 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                         item.itemsName ?? 'No Name',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18.sp, // حجم أصغر شوية
+                          fontSize: 18.sp,
                           color: Colors.black87,
                           letterSpacing: 0.5,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 6.h), // مسافة أقل
+                      SizedBox(height: 6.h),
                       Text(
                         item.itemsDes ?? 'No Description',
                         style: TextStyle(
-                          fontSize: 13.sp, // حجم أصغر
+                          fontSize: 13.sp,
                           color: Colors.grey[700],
                           height: 1.3,
                         ),
-                        maxLines: 2, // قللنا السطور عشان الارتفاع
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 10.h), // مسافة أقل
-                      // الأسعار
+                      SizedBox(height: 10.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -201,10 +197,9 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10.h), // مسافة أقل
-                      // قسم المطعم والتقييم ورقم الموبايل
+                      SizedBox(height: 10.h),
                       Container(
-                        padding: EdgeInsets.all(8.w), // padding أقل
+                        padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
                           color: Colors.grey[50],
                           borderRadius: BorderRadius.circular(8.r),
@@ -231,7 +226,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                   child: Text(
                                     restaurantName,
                                     style: TextStyle(
-                                      fontSize: 14.sp, // حجم أصغر
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black87,
                                     ),
@@ -240,12 +235,12 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 6.h), // مسافة أقل
+                            SizedBox(height: 6.h),
                             Row(
                               children: [
                                 Icon(
                                   Icons.star,
-                                  size: 16.w, // أيقونة أصغر
+                                  size: 16.w,
                                   color: Colors.amber,
                                 ),
                                 SizedBox(width: 6.w),
@@ -258,7 +253,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 6.h), // مسافة أقل
+                            SizedBox(height: 6.h),
                             Row(
                               children: [
                                 Icon(
@@ -279,8 +274,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                           ],
                         ),
                       ),
-                      SizedBox(height: 12.h), // مسافة أقل
-                      // الأزرار (أيقونات أصغر)
+                      SizedBox(height: 12.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -329,7 +323,6 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                     ],
                   ),
                 ),
-                // زر الإغلاق
                 Container(
                   width: double.infinity,
                   padding:
@@ -341,7 +334,9 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      print("Dialog closed");
+                      if (kDebugMode) {
+                        print("Dialog closed");
+                      }
                       Navigator.pop(dialogContext);
                     },
                     style: ElevatedButton.styleFrom(
@@ -394,7 +389,7 @@ Widget _buildActionButton({
       child: Icon(
         icon,
         color: color,
-        size: 18.w, // أيقونة أصغر
+        size: 18.w,
       ),
     ),
   );

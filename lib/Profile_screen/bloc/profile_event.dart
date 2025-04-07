@@ -5,3 +5,12 @@ class FetchProfileEvent extends ProfileEvent {
 
   FetchProfileEvent(this.userId);
 }
+
+class UpdateProfileEvent extends ProfileEvent {
+  final String userId;
+  final String username;
+  final String email;
+  final String phone;
+
+  UpdateProfileEvent(this.userId, this.username, this.email, this.phone);
+}

@@ -48,7 +48,7 @@ class TopSellingListWidget extends StatelessWidget {
                 child: Center(
                   child: CircularProgressIndicator(
                     color: MyTheme.orangeColor,
-                    strokeWidth: 6.w,
+                    strokeWidth: 3.w,
                     backgroundColor: Colors.grey[200],
                   ),
                 ),
@@ -165,7 +165,7 @@ class TopSellingListWidget extends StatelessWidget {
               child: Center(
                 child: CircularProgressIndicator(
                   color: MyTheme.orangeColor,
-                  strokeWidth: 6.w,
+                  strokeWidth: 3.w,
                   backgroundColor: Colors.grey[200],
                 ),
               ),
@@ -181,7 +181,7 @@ class TopSellingListWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AllTopSellingPage()), // التنقل لصفحة Top Selling
+          MaterialPageRoute(builder: (context) => const AllTopSellingPage()), // التنقل لصفحة Top Selling
         );
       },
       child: Container(

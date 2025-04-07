@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +14,9 @@ class DiscountList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-        print("Current State in DiscountList: $state");
+        if (kDebugMode) {
+          print("Current State in DiscountList: $state");
+        }
         if (state is FetchLoadingHomeDataState) {
           return Center(
             child: CircularProgressIndicator(
@@ -22,7 +25,9 @@ class DiscountList extends StatelessWidget {
             ),
           );
         } else if (state is FetchSuccessHomeDataState) {
-          print("Items in FetchSuccessHomeDataState: ${state.items.length}");
+          if (kDebugMode) {
+            print("Items in FetchSuccessHomeDataState: ${state.items.length}");
+          }
           if (state.items.isEmpty) {
             return _buildEmptyState();
           }

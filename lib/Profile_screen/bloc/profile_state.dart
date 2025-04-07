@@ -1,5 +1,5 @@
-import 'package:graduation_project/Profile_screen/data/model/response/profile_screen_response/profile_screen_response.dart';
-
+import '../data/model/response/profile_screen_response/EditeProfileResponse.dart';
+import '../data/model/response/profile_screen_response/ProfileScreenResponse.dart';
 
 abstract class ProfileState {}
 
@@ -11,6 +11,12 @@ class ProfileLoaded extends ProfileState {
   final ProfileScreenResponse profile;
 
   ProfileLoaded(this.profile);
+}
+
+class ProfileUpdated extends ProfileState {
+  final EditeProfileResponse response;
+
+  ProfileUpdated(this.response);
 }
 
 class ProfileError extends ProfileState {

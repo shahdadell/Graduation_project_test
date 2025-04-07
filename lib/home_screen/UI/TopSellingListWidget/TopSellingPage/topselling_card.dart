@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/Theme/theme.dart';
@@ -125,7 +126,9 @@ Widget buildTopCard(BuildContext context, dynamic item) {
             padding: EdgeInsets.only(right: 10.w),
             child: GestureDetector(
               onTap: () {
-                print("Details button tapped: ${item.itemsName}");
+                if (kDebugMode) {
+                  print("Details button tapped: ${item.itemsName}");
+                }
                 showItemDetailsDialogTopSelling(context, item);
               },
               child: Container(

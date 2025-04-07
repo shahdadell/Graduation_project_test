@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_state.dart';
@@ -12,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<FetchDiscountEvent>(fetchDiscountedItems);
     on<FetchServicesEvent>(fetchServicesByCategory);
     on<FetchServiceItemsEvent>(fetchServiceItems);
+    on<FetchSearchEvent>(fetchSearch); // إضافة الـ Search Event
   }
 
   Future<void> fetchHomeData(
@@ -39,7 +41,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> fetchTopSelling(
       FetchTopSellingEvent event, Emitter<HomeState> emit) async {
-    print("FetchTopSellingEvent Started");
+    if (kDebugMode) {
+      print("FetchTopSellingEvent Started");
+    }
     emit(FetchTopSellingLoadingState());
     try {
       final topSellingResponse = await HomeRepo.fetchTopSelling();
@@ -48,7 +52,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           "FetchTopSellingEvent Succeeded with ${topSellingItems.length} items");
       emit(FetchTopSellingSuccessState(topSelling: topSellingItems));
     } catch (e) {
-      print("FetchTopSellingEvent Failed: $e");
+      if (kDebugMode) {
+        print("FetchTopSellingEvent Failed: $e");
+      }
       emit(FetchTopSellingErrorState(message: e.toString()));
     }
   }
@@ -97,6 +103,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(FetchServiceItemsSuccessState(items: items));
     } catch (e) {
       emit(FetchServiceItemsErrorState(message: e.toString()));
+    }
+  }
+
+  Future<void> fetchSearch(
+      FetchSearchEvent event, Emitter<HomeState> emit) async {
+    emit(FetchSearchLoadingState());
+    try {
+      final searchResults = await HomeRepo.fetchSearch(event.query);
+      emit(FetchSearchSuccessState(services: searchResults));
+    } catch (e) {
+      emit(FetchSearchErrorState(message: e.toString()));
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:graduation_project/home_screen/data/model/item_model_response/It
 import 'package:graduation_project/home_screen/data/model/offers_model_response/offers_model_response.dart';
 import 'package:graduation_project/home_screen/data/model/services_model_response/service_model.dart';
 import 'package:graduation_project/home_screen/data/model/topSelling_model_response/TopSellinModelResponse.dart';
+import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart' as search; // Alias
 
 abstract class HomeState {}
 
@@ -15,7 +16,6 @@ class FetchLoadingHomeDataState extends HomeState {}
 class FetchSuccessHomeDataState extends HomeState {
   final List<Categorydatum> categories;
   final List<ItemModel> items;
-
   FetchSuccessHomeDataState({required this.categories, required this.items});
 }
 
@@ -90,4 +90,17 @@ class FetchServiceItemsSuccessState extends HomeState {
 class FetchServiceItemsErrorState extends HomeState {
   final String message;
   FetchServiceItemsErrorState({required this.message});
+}
+
+// الـ States الجديدة للسيرش
+class FetchSearchLoadingState extends HomeState {}
+
+class FetchSearchSuccessState extends HomeState {
+  final List<search.Data> services; // استخدام search.Data
+  FetchSearchSuccessState({required this.services});
+}
+
+class FetchSearchErrorState extends HomeState {
+  final String message;
+  FetchSearchErrorState({required this.message});
 }

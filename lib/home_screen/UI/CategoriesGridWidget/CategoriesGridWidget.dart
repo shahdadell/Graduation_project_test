@@ -97,12 +97,12 @@ class CategoriesGridWidget extends StatelessWidget {
             ),
           );
         } else if (state is HomeErrorState) {
-          return Container(
+          return SizedBox(
             height: 150.h,
             child: Center(child: Text("Error: ${state.message}", style: TextStyle(fontSize: 14.sp))),
           );
         }
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       },
     );
   }

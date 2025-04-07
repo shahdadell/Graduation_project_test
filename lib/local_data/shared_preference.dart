@@ -15,7 +15,7 @@ class AppLocalStorage {
     } else if (value is bool) {
       await _preferences.setBool(key, value);
     } else if (value is int) {
-      await _preferences.setInt(key, value); // استخدم setInt لتخزين int
+      await _preferences.setInt(key, value);
     } else if (value is double) {
       await _preferences.setDouble(key, value);
     } else if (value is List<String>) {

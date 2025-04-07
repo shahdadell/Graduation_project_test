@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,8 +24,10 @@ class TopSellingList extends StatelessWidget {
             ),
           );
         } else if (state is FetchTopSellingSuccessState) {
-          print(
+          if (kDebugMode) {
+            print(
               "Items in FetchTopSellingSuccessState: ${state.topSelling.length}");
+          }
           if (state.topSelling.isEmpty) {
             return _buildEmptyState();
           }
@@ -95,7 +98,9 @@ class TopSellingList extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-        print("Building card for item: ${item.itemsName} at index: $index");
+        if (kDebugMode) {
+          print("Building card for item: ${item.itemsName} at index: $index");
+        }
         return Padding(
           padding: EdgeInsets.only(bottom: 10.h),
           child: buildTopCard(context, item),

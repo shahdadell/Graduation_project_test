@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:dio/dio.dart';
 import 'package:graduation_project/API_Services/endpoints.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
@@ -12,8 +10,8 @@ class DioProvider {
     await AppLocalStorage.init();
     _dio = Dio(BaseOptions(
       baseUrl: AppEndpoints.baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
       validateStatus: (status) {
         return status! >= 200 && status < 300;
       },
@@ -31,6 +29,33 @@ class DioProvider {
         print('Response [${response.statusCode}] from: ${response.requestOptions.uri}');
         print('Response Headers: ${response.headers}');
         print('Raw Response: ${response.data}');
+
+        // التحقق من إن الاستجابة مش فارغة
+        if (response.data == null || response.data.toString().trim().isEmpty) {
+          print('Error: Response is empty or null');
+          throw Exception('Response is empty or null');
+        }
+
+        // تنظيف الاستجابة
+        String responseData = response.data.toString().trim();
+        print('Trimmed Response: $responseData');
+
+        // التحقق من إن الاستجابة كاملة (تحتوي على { و })
+        if (!responseData.startsWith('{') || !responseData.endsWith('}')) {
+          print('Error: Incomplete JSON response');
+          throw Exception('Incomplete JSON response: $responseData');
+        }
+
+        // محاولة تحليل الاستجابة كـ JSON
+        try {
+          response.data = jsonDecode(responseData);
+          print('Cleaned Response (Parsed JSON): ${response.data}');
+        } catch (e) {
+          print('Failed to parse response as JSON: $e');
+          print('Response (before parsing): $responseData');
+          throw Exception('Invalid JSON format: $responseData');
+        }
+
         return handler.next(response);
       },
       onError: (DioException e, handler) {
@@ -49,9 +74,10 @@ class DioProvider {
   }
 
   static Future<Map<String, String>> _prepareHeaders(
-      Map<String, dynamic>? headers, {String contentType = 'application/json'}) async {
+      Map<String, dynamic>? headers,
+      {String contentType = 'application/json'}) async {
     final Map<String, String> defaultHeaders = {
-      'Content-Type': contentType, // استخدمنا الـ contentType اللي بيتبعت كـ parameter
+      'Content-Type': contentType,
     };
 
     final String? token = await _getToken();
@@ -73,7 +99,7 @@ class DioProvider {
     Object? data,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? queryParameters,
-    String contentType = 'application/x-www-form-urlencoded', // أضفنا contentType كـ parameter
+    String contentType = 'application/x-www-form-urlencoded',
   }) async {
     try {
       final preparedHeaders = await _prepareHeaders(headers, contentType: contentType);
@@ -81,7 +107,6 @@ class DioProvider {
       print('Headers: $preparedHeaders');
       print('Data: $data');
       print('Query Parameters: $queryParameters');
-      
       final response = await _dio.get(
         endpoint,
         data: data,
@@ -92,33 +117,18 @@ class DioProvider {
         ),
       );
 
-      try {
-        final jsonData = jsonDecode(response.data as String);
-        response.data = jsonData;
-        print('Parsed Response: $jsonData');
-      } catch (e) {
-        print('Failed to parse response as JSON: $e');
-        print('Raw Response: ${response.data}');
-        throw Exception('Invalid response format: ${response.data}');
-      }
-
       return response;
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        throw Exception(
-            'Connection timeout while making GET request to $endpoint');
+        throw Exception('Connection timeout while making GET request to $endpoint');
       } else if (e.type == DioExceptionType.receiveTimeout) {
-        throw Exception(
-            'Receive timeout while making GET request to $endpoint');
+        throw Exception('Receive timeout while making GET request to $endpoint');
       } else if (e.type == DioExceptionType.badResponse) {
-        throw Exception(
-            'Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
+        throw Exception('Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
       } else if (e.type == DioExceptionType.connectionError) {
-        throw Exception(
-            'Connection error: Please check your internet connection');
+        throw Exception('Connection error: Please check your internet connection');
       } else {
-        throw Exception(
-            'DioException [${e.type}]: ${e.message} - ${e.response?.data}');
+        throw Exception('DioException [${e.type}]: ${e.message} - ${e.response?.data}');
       }
     } catch (e) {
       throw Exception('Error making GET request to $endpoint: $e');
@@ -129,7 +139,7 @@ class DioProvider {
     required String endpoint,
     Object? data,
     Map<String, dynamic>? headers,
-    String contentType = 'application/json', // أضفنا contentType هنا كمان
+    String contentType = 'multipart/form-data',
   }) async {
     try {
       final preparedHeaders = await _prepareHeaders(headers, contentType: contentType);
@@ -139,26 +149,24 @@ class DioProvider {
       final response = await _dio.post(
         endpoint,
         data: data,
-        options: Options(headers: preparedHeaders),
+        options: Options(
+          headers: preparedHeaders,
+          responseType: ResponseType.plain, // نضيف ده عشان نستقبل الاستجابة كنص خام
+        ),
       );
       print('Response: ${response.data}');
       return response;
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        throw Exception(
-            'Connection timeout while making POST request to $endpoint');
+        throw Exception('Connection timeout while making POST request to $endpoint');
       } else if (e.type == DioExceptionType.receiveTimeout) {
-        throw Exception(
-            'Receive timeout while making POST request to $endpoint');
+        throw Exception('Receive timeout while making POST request to $endpoint');
       } else if (e.type == DioExceptionType.badResponse) {
-        throw Exception(
-            'Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
+        throw Exception('Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
       } else if (e.type == DioExceptionType.connectionError) {
-        throw Exception(
-            'Connection error: Please check your internet connection');
+        throw Exception('Connection error: Please check your internet connection');
       } else {
-        throw Exception(
-            'DioException [${e.type}]: ${e.message} - ${e.response?.data}');
+        throw Exception('DioException [${e.type}]: ${e.message} - ${e.response?.data}');
       }
     } catch (e) {
       throw Exception('Error making POST request to $endpoint: $e');
@@ -185,20 +193,15 @@ class DioProvider {
       return response;
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        throw Exception(
-            'Connection timeout while making PUT request to $endpoint');
+        throw Exception('Connection timeout while making PUT request to $endpoint');
       } else if (e.type == DioExceptionType.receiveTimeout) {
-        throw Exception(
-            'Receive timeout while making PUT request to $endpoint');
+        throw Exception('Receive timeout while making PUT request to $endpoint');
       } else if (e.type == DioExceptionType.badResponse) {
-        throw Exception(
-            'Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
+        throw Exception('Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
       } else if (e.type == DioExceptionType.connectionError) {
-        throw Exception(
-            'Connection error: Please check your internet connection');
+        throw Exception('Connection error: Please check your internet connection');
       } else {
-        throw Exception(
-            'DioException [${e.type}]: ${e.message} - ${e.response?.data}');
+        throw Exception('DioException [${e.type}]: ${e.message} - ${e.response?.data}');
       }
     } catch (e) {
       throw Exception('Error making PUT request to $endpoint: $e');
@@ -225,68 +228,18 @@ class DioProvider {
       return response;
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        throw Exception(
-            'Connection timeout while making DELETE request to $endpoint');
+        throw Exception('Connection timeout while making DELETE request to $endpoint');
       } else if (e.type == DioExceptionType.receiveTimeout) {
-        throw Exception(
-            'Receive timeout while making DELETE request to $endpoint');
+        throw Exception('Receive timeout while making DELETE request to $endpoint');
       } else if (e.type == DioExceptionType.badResponse) {
-        throw Exception(
-            'Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
+        throw Exception('Bad response from $endpoint: ${e.response?.statusCode} - ${e.response?.data}');
       } else if (e.type == DioExceptionType.connectionError) {
-        throw Exception(
-            'Connection error: Please check your internet connection');
+        throw Exception('Connection error: Please check your internet connection');
       } else {
-        throw Exception(
-            'DioException [${e.type}]: ${e.message} - ${e.response?.data}');
+        throw Exception('DioException [${e.type}]: ${e.message} - ${e.response?.data}');
       }
     } catch (e) {
       throw Exception('Error making DELETE request to $endpoint: $e');
     }
   }
 }
-
-// import 'package:dio/dio.dart';
-// import 'package:graduation_project/API_Services/endpoints.dart';
-
-// class DioProvider {
-//   static late Dio _dio;
-
-//   static init() {
-//     _dio = Dio(BaseOptions(
-//       baseUrl: AppEndpoints.baseUrl,
-//     ));
-//   }
-
-//   static Future<Response> get(
-//       {required String endpoint,
-//       Object? data,
-//       Map<String, dynamic>? headers}) async {
-//     return await _dio.get(endpoint,
-//         data: data, options: Options(headers: headers));
-//   }
-
-//   static Future<Response> post(
-//       {required String endpoint,
-//       Object? data,
-//       Map<String, dynamic>? headers}) async {
-//     return await _dio.post(endpoint,
-//         data: data, options: Options(headers: headers));
-//   }
-
-//   static Future<Response> put(
-//       {required String endpoint,
-//       Object? data,
-//       Map<String, dynamic>? headers}) async {
-//     return await _dio.put(endpoint,
-//         data: data, options: Options(headers: headers));
-//   }
-
-//   static Future<Response> delete(
-//       {required String endpoint,
-//       Map<String, dynamic>? data,
-//       Map<String, dynamic>? headers}) async {
-//     return await _dio.delete(endpoint,
-//         data: data, options: Options(headers: headers));
-//   }
-// }

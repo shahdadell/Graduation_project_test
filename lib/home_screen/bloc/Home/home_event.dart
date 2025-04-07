@@ -12,14 +12,12 @@ class FetchOffersEvent extends HomeEvent {}
 class FetchTopSellingEvent extends HomeEvent {}
 
 class FetchCategoriesEvent extends HomeEvent {
-  final HomeModelResponse?
-      params; // جعلته اختياري لأنه مش مستخدم حاليًا في الـ Repo
+  final HomeModelResponse? params;
   FetchCategoriesEvent(this.params);
 }
 
 class FetchDiscountEvent extends HomeEvent {
-  final HomeModelResponse?
-      params; // جعلته اختياري لأنه مش مستخدم حاليًا في الـ Repo
+  final HomeModelResponse? params;
   FetchDiscountEvent(this.params);
 }
 
@@ -32,4 +30,10 @@ class FetchServiceItemsEvent extends HomeEvent {
   final int serviceId;
   final int userId;
   FetchServiceItemsEvent({required this.serviceId, required this.userId});
+}
+
+// الـ Event الجديد للسيرش
+class FetchSearchEvent extends HomeEvent {
+  final String query;
+  FetchSearchEvent(this.query);
 }

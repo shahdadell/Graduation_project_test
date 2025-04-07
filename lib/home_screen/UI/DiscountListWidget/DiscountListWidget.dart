@@ -34,7 +34,7 @@ class DiscountListWidget extends StatelessWidget {
           shadows: [
             Shadow(
               color: Colors.black26,
-              offset: Offset(1, 1),
+              offset: const Offset(1, 1),
               blurRadius: 3.r,
             ),
           ],
@@ -47,15 +47,21 @@ class DiscountListWidget extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         if (state is FetchLoadingHomeDataState) {
-          return Container(
+          return SizedBox(
             height: 130.h,
-            child: Center(child: CircularProgressIndicator(color: MyTheme.orangeColor)),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: MyTheme.orangeColor,
+                strokeWidth: 6.w,
+                backgroundColor: Colors.grey[200],
+              ),
+            ),
           );
         } else if (state is FetchSuccessHomeDataState) {
           final itemCount = state.items.length > 4 ? 5 : state.items.length;
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: Container(
+            child: SizedBox(
               height: 130.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -65,13 +71,47 @@ class DiscountListWidget extends StatelessWidget {
                     return _buildShowMoreCard(context);
                   }
                   final item = state.items[index];
-                  return DiscountCard(item: item); // هنعدل الـ DiscountCard بس
+                  return DiscountCard(item: item);
                 },
               ),
             ),
           );
+        } else if (state is HomeErrorState) {
+          return Container(
+            height: 130.h,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 50.w,
+                    color: Colors.redAccent,
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    "Failed to load discounts",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
-        return SizedBox.shrink();
+        return SizedBox(
+          height: 130.h,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: MyTheme.orangeColor,
+              strokeWidth: 3.w,
+              backgroundColor: Colors.grey[200],
+            ),
+          ),
+        );
       },
     );
   }

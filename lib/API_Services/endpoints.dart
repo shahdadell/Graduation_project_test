@@ -25,8 +25,9 @@ class AppEndpoints {
 
   //Profile
   static const String profileView = "profile/view.php";
+  static const String profileEdite = "profile/edit_profile.php";
 
   //Search
-  //static const String search = "items/search.php";
+  static const String search = "items/search.php";
 
 }
