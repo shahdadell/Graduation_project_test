@@ -4,7 +4,7 @@ import 'profile_event.dart';
 import 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final Profilerepo profileRepo;
+  final ProfileRepo profileRepo;
 
   ProfileBloc(this.profileRepo) : super(ProfileInitial()) {
     on<FetchProfileEvent>((event, emit) async {
@@ -12,6 +12,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       try {
         final profile = await profileRepo.fetchProfile(event.userId);
         emit(ProfileLoaded(profile));
+      } catch (e) {
+        emit(ProfileError(e.toString()));
+      }
+    });
+
+    on<UpdateProfileEvent>((event, emit) async {
+      emit(ProfileLoading());
+      try {
+        final response = await profileRepo.updateProfile(
+          event.userId,
+          event.username,
+          event.email,
+          event.phone,
+        );
+        if (response.status == 'success') {
+          emit(ProfileUpdated(response));
+          final updatedProfile = await profileRepo.fetchProfile(event.userId);
+          emit(ProfileLoaded(updatedProfile));
+        } else {
+          emit(ProfileError(response.message ?? 'Failed to update profile'));
+        }
       } catch (e) {
         emit(ProfileError(e.toString()));
       }

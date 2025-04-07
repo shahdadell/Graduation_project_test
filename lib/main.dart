@@ -18,6 +18,8 @@ import 'auth/OTP/otp_screen.dart';
 import 'auth/forget_password/OTP_Forget_Password/otp_screen.dart';
 import 'auth/sign_up_screen/sign_up_screen.dart';
 import 'auth/sing_in_screen/sign_in_screen.dart';
+import 'home_screen/UI/SearchFieldWidget/SearchFieldWidget.dart';
+import 'home_screen/UI/SearchFieldWidget/SearchScreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
             SignInScreen.routName: (context) => const SignInScreen(),
             SignUpScreen.routName: (context) => const SignUpScreen(),
             OtpScreen.routName: (context) => const OtpScreen(),
+            SearchScreen.routeName: (context) => const SearchScreen(),
             OtpScreenForgetPassword.routName: (context) =>
                 const OtpScreenForgetPassword(),
             ForgetPassword.routName: (context) => const ForgetPassword(),

@@ -161,14 +161,11 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                     );
                   }
                   return Container(
-                    height: 120.h, // صغرنا من 150.h
+                    height: 120.h,
                     child: Center(
-                      child: Text(
-                        "Error loading offers",
-                        style: TextStyle(
-                          fontSize: 12.sp, // صغرنا من 14.sp
-                          color: Colors.grey[600],
-                        ),
+                      child: CircularProgressIndicator(
+                        color: MyTheme.orangeColor,
+                        strokeWidth: 3.w,
                       ),
                     ),
                   );

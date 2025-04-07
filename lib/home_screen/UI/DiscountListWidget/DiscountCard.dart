@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'DiscountPage/item_details_dialog.dart';
@@ -11,7 +12,9 @@ class DiscountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print("Discount Card tapped: ${item.itemsName}");
+        if (kDebugMode) {
+          print("Discount Card tapped: ${item.itemsName}");
+        }
         showItemDetailsDialog(context, item); // استدعاء الـ Dialog
       },
       child: Container(

@@ -21,7 +21,7 @@ class ServicesCarousel extends StatelessWidget {
                 autoPlay: true,
                 enlargeCenterPage: true,
                 aspectRatio: 16 / 9,
-                autoPlayInterval: Duration(seconds: 3),
+                autoPlayInterval: const Duration(seconds: 3),
                 viewportFraction: 0.8,
               ),
               items: state.services.take(3).map((service) {
@@ -45,19 +45,19 @@ class ServicesCarousel extends StatelessWidget {
                           fit: StackFit.expand,
                           children: [
                             service.serviceImage != null &&
-                                service.serviceImage!.isNotEmpty
+                                    service.serviceImage!.isNotEmpty
                                 ? Image.network(
-                              service.serviceImage!,
-                              fit: BoxFit.cover,
-                            )
+                                    service.serviceImage!,
+                                    fit: BoxFit.cover,
+                                  )
                                 : Container(
-                              color: Colors.grey[200],
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 50.w,
-                                color: Colors.grey[400],
-                              ),
-                            ),
+                                    color: Colors.grey[200],
+                                    child: Icon(
+                                      Icons.image_not_supported,
+                                      size: 50.w,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
                             Container(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
@@ -92,7 +92,7 @@ class ServicesCarousel extends StatelessWidget {
             ),
           );
         }
-        return const SizedBox.shrink(); // إذا لم يكن هناك خدمات أو الحالة ليست Success
+        return const SizedBox.shrink();
       },
     );
   }

@@ -17,9 +17,9 @@ class ServicesFloatingButton extends StatelessWidget {
         BlocProvider.of<HomeBloc>(context).add(FetchServicesEvent(categoryId));
       },
       backgroundColor: MyTheme.orangeColor,
-      child: Icon(Icons.refresh, size: 24.w, color: Colors.white),
       elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+      child: Icon(Icons.refresh, size: 24.w, color: Colors.white),
     );
   }
 }

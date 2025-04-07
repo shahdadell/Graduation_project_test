@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,7 @@ import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
 import '../CategoriesGridWidget/CategoriesGridWidget.dart';
 import '../DiscountListWidget/DiscountListWidget.dart';
 import '../SearchFieldWidget/SearchFieldWidget.dart';
+import '../SearchFieldWidget/SearchScreen.dart';
 import '../SpecialOfferCarouselWidget/SpecialOfferCarouselWidget.dart';
 import '../TopSellingListWidget/TopSellingListWidget.dart';
 
@@ -25,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(minutes: 1), (timer) {
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       setState(() {});
     });
   }
@@ -41,9 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocProvider(
       create: (context) {
         final bloc = HomeBloc();
-        print("Adding FetchHomeDataEvent"); // تأكد إن الـ Event الأول بيترمي
+        if (kDebugMode) {
+          print("Adding FetchHomeDataEvent");
+        }
         bloc.add(FetchHomeDataEvent(null));
-        print("Adding FetchTopSellingEvent"); // تأكد إن الـ Event التاني بيترمي
+        if (kDebugMode) {
+          print("Adding FetchTopSellingEvent");
+        }
         bloc.add(FetchTopSellingEvent());
         return bloc;
       },
@@ -61,16 +67,17 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TopBarWidget(),
-                  SearchFieldWidget(),
+                  const TopBarWidget(),
+                  SearchFieldWidget(
+                    isClickable: true, // هنا بنخليه ينقل لـ SearchScreen
+                  ), // مش محتاجين onSearch لأن البحث مش هيحصل هنا
                   SizedBox(height: 10.h),
-                  SpecialOfferCarouselWidget(),
+                  const SpecialOfferCarouselWidget(),
                   SizedBox(height: 15.h),
-                  CategoriesGridWidget(),
+                  const CategoriesGridWidget(),
                   SizedBox(height: 15.h),
-                  DiscountListWidget(),
-                  // SizedBox(height: 1.h),
-                  TopSellingListWidget(),
+                  const DiscountListWidget(),
+                  const TopSellingListWidget(),
                   SizedBox(height: 15.h),
                 ],
               ),

@@ -43,7 +43,7 @@ class ServicesList extends StatelessWidget {
                           arguments: {
                             'serviceId':
                                 int.tryParse(service.categoryId ?? '0') ?? 0,
-                            'userId': 10, // استبدلي بالـ userId الفعلي
+                            'userId': 10,
                           },
                         );
                       },
@@ -257,11 +257,10 @@ class ServicesList extends StatelessWidget {
             ),
           );
         }
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       },
     );
   }
-
   Widget _buildChip({
     required String label,
     required IconData icon,
@@ -271,7 +270,7 @@ class ServicesList extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         decoration: BoxDecoration(
           color: color,

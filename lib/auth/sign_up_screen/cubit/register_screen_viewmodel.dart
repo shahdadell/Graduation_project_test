@@ -44,25 +44,4 @@ class RegisterScreenViewmodel extends Cubit<RegisterState> {
       }
     }
   }
-  // Future<void> SignUp([BuildContext? context]) async {
-  //   if (formKey.currentState?.validate() == true) {
-  //     try {
-  //       emit(RegisterLoadingState(loadingMassage: "Loading..."));
-  //       var response = await repositoryContract.register(
-  //         userNameController.text,
-  //         passwordController.text,
-  //         emailController.text,
-  //         phoneController.text,
-  //       );
-  //       if (response.status == 'failure') {
-  //         emit(RegisterErrorState(errorMessage: response.message));
-  //       } else {
-  //         emit(RegisterSuccessState(response: response));
-  //       }
-  //     } catch (e) {
-  //       emit(RegisterErrorState(
-  //           errorMessage: e.toString().replaceAll('Exception: ', '')));
-  //     }
-  //   }
-  // }
 }

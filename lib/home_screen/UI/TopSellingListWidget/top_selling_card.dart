@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/Theme/theme.dart';
@@ -6,7 +7,9 @@ import 'TopSellingPage/item_details_dialog.dart';
 Widget buildTopSellingCard(BuildContext context, dynamic item) {
   return GestureDetector(
     onTap: () {
-      print("Top Selling Card tapped: ${item.itemsName}");
+      if (kDebugMode) {
+        print("Top Selling Card tapped: ${item.itemsName}");
+      }
       showItemDetailsDialogTopSelling(context, item); // استدعاء الـ Dialog
     },
     child: Container(

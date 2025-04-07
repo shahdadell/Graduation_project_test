@@ -8,10 +8,9 @@ import 'package:graduation_project/Theme/style.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/homevariables.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 
-// تعريف homeTopBar مع الـ BuildContext كـ parameter
 
 Widget homeTopBar(BuildContext context) {
-  String greeting = getGreetingMessage();
+  String greeting  = getGreetingMessage();
   final int? userId = AppLocalStorage.getData('user_id'); // جيب الـ userId من الـ storage
 
   return Row(
@@ -32,9 +31,9 @@ Widget homeTopBar(BuildContext context) {
         },
         overlayColor:  WidgetStatePropertyAll(MyTheme.transparent),
         child:  Icon(
-          Icons.person, // أيقونة الـ profile من مكتبة Icons
+          Icons.person,
           size: 24,
-          color: MyTheme.blackColor, // عدلي اللون حسب الثيم بتاعك
+          color: MyTheme.blackColor,
         ),
         // لو عندك صورة للـ profile في AppImages، استخدمي Image.asset:
         // child: Image.asset(

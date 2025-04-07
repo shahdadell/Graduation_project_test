@@ -8,14 +8,41 @@ import 'package:graduation_project/Profile_screen/data/auth_utils.dart';
 import 'package:graduation_project/Profile_screen/data/repo/profile_repo.dart';
 import 'package:graduation_project/Theme/theme.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<int?>(
       future: AuthUtils.getUserIdDirectly(),
       builder: (context, snapshot) {
+        print('User ID from AuthUtils: ${snapshot.data}');
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             body: Center(
@@ -44,7 +71,7 @@ class ProfileScreen extends StatelessWidget {
         } else {
           final userId = snapshot.data!.toString();
           return BlocProvider(
-            create: (context) => ProfileBloc(Profilerepo())..add(FetchProfileEvent(userId)),
+            create: (context) => ProfileBloc(ProfileRepo())..add(FetchProfileEvent(userId)),
             child: Scaffold(
               appBar: _buildAppBar(context),
               body: Container(
@@ -55,14 +82,32 @@ class ProfileScreen extends StatelessWidget {
                     end: Alignment.bottomCenter,
                   ),
                 ),
-                child: BlocBuilder<ProfileBloc, ProfileState>(
+                child: BlocConsumer<ProfileBloc, ProfileState>(
+                  listener: (context, state) {
+                    if (state is ProfileUpdated) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Profile updated successfully")),
+                      );
+                      setState(() => _isEditing = false);
+                    } else if (state is ProfileError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
+                      );
+                    }
+                  },
                   builder: (context, state) {
                     if (state is ProfileLoading) {
                       return Center(
                         child: CircularProgressIndicator(color: MyTheme.orangeColor),
                       );
-                    } else if (state is ProfileLoaded) {
-                      final profile = state.profile.data;
+                    } else if (state is ProfileLoaded || state is ProfileUpdated) {
+                      final profile = (state is ProfileLoaded)
+                          ? state.profile.data
+                          : (state as ProfileUpdated).response.data;
+                      _nameController.text = profile?.usersName ?? '';
+                      _emailController.text = profile?.usersEmail ?? '';
+                      _phoneController.text = profile?.usersPhone ?? '';
+
                       return SingleChildScrollView(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -72,16 +117,34 @@ class ProfileScreen extends StatelessWidget {
                               SizedBox(height: 20.h),
                               _buildProfileImage(profile?.usersImage),
                               SizedBox(height: 20.h),
-                              _buildProfileCard(
-                                context,
-                                [
-                                  _buildProfileItem("User ID", profile?.usersId ?? 'N/A'),
-                                  _buildProfileItem("Name", profile?.usersName ?? 'N/A'),
-                                  _buildProfileItem("Email", profile?.usersEmail ?? 'N/A'),
-                                  _buildProfileItem("Phone", profile?.usersPhone ?? 'N/A'),
-                                  _buildProfileItem("Approved", profile?.usersApprove ?? 'N/A'),
-                                  _buildProfileItem("Created", profile?.usersCreate ?? 'N/A'),
-                                ],
+                              _buildProfileCard(context, profile, userId),
+                              SizedBox(height: 20.h),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_isEditing) {
+                                    context.read<ProfileBloc>().add(
+                                      UpdateProfileEvent(
+                                        userId,
+                                        _nameController.text,
+                                        _emailController.text,
+                                        _phoneController.text,
+                                      ),
+                                    );
+                                  } else {
+                                    setState(() => _isEditing = true);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: MyTheme.orangeColor,
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ),
+                                child: Text(
+                                  _isEditing ? "Save" : "Edit Profile",
+                                  style: TextStyle(fontSize: 16.sp, color: Colors.white),
+                                ),
                               ),
                             ],
                           ),
@@ -183,7 +246,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(BuildContext context, List<Widget> items) {
+  Widget _buildProfileCard(BuildContext context, dynamic profile, String userId) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
@@ -204,7 +267,51 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: items,
+        children: [
+          _buildEditableField("Name", _nameController),
+          _buildEditableField("Email", _emailController),
+          _buildEditableField("Phone", _phoneController),
+          _buildProfileItem("User ID", profile?.usersId ?? 'N/A'),
+          _buildProfileItem("Approved", profile?.usersApprove ?? 'N/A'),
+          _buildProfileItem("Created", profile?.usersCreate ?? 'N/A'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditableField(String label, TextEditingController controller) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "$label:",
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: _isEditing
+                ? TextField(
+              controller: controller,
+              style: TextStyle(fontSize: 16.sp),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
+              ),
+            )
+                : Text(
+              controller.text,
+              style: TextStyle(fontSize: 16.sp, color: Colors.grey[700]),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
