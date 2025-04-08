@@ -2,11 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/home_screen/UI/SearchFieldWidget/SearchFieldWidget.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_state.dart';
 import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart' as search;
+
+import 'SearchResultCard.dart';
 
 class SearchScreen extends StatefulWidget {
   static const String routeName = 'SearchScreen';
@@ -30,196 +33,121 @@ class _SearchScreenState extends State<SearchScreen> {
     _lastQuery = query;
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      context.read<HomeBloc>().add(FetchSearchEvent(query));
+      if (query.trim().isEmpty) { // تأكدنا إن النص فاضي حتى لو فيه مسافات
+        context.read<HomeBloc>().add(ClearSearchEvent());
+      } else {
+        context.read<HomeBloc>().add(FetchSearchEvent(query));
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.h),
-        child: SafeArea(
+      backgroundColor: MyTheme.whiteColor,
+      appBar: AppBar(
+        leading: InkWell(
+          onTap: () => Navigator.pop(context),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.grey[700]),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  Expanded(
-                    child: SearchFieldWidget(
-                      isClickable: false,
-                      onSearch: search,
-                    ),
-                  ),
-                ],
-              ),
+            padding: EdgeInsets.all(12.w),
+            child: Icon(Icons.arrow_back_ios, color: MyTheme.whiteColor, size: 24.w),
+          ),
+        ),
+        title: Text(
+          "Search",
+          style: textTheme.displayLarge,
+        ),
+        centerTitle: true,
+        backgroundColor: MyTheme.orangeColor,
+        elevation: 4,
+        shadowColor: Colors.black.withOpacity(0.3),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [MyTheme.orangeColor, Colors.orange[400]!],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
       ),
-      body: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          if (state is FetchSearchLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is FetchSearchSuccessState) {
-            if (state.services.isEmpty) {
-              return Center(
-                child: Text(
-                  "لا توجد نتائج. جرب كلمة أخرى!",
-                  style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
-                ),
-              );
-            }
-            return ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              physics: const BouncingScrollPhysics(),
-              itemCount: state.services.length,
-              itemBuilder: (context, index) {
-                return SearchResultCard(service: state.services[index]);
-              },
-            );
-          } else if (state is FetchSearchErrorState) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "حدث خطأ: ${state.message}",
-                    style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 20.h),
-                  ElevatedButton(
-                    onPressed: () {
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
+            child: SearchFieldWidget(
+              isClickable: false,
+              onSearch: search,
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                if (state is FetchSearchLoadingState) {
+                  return Center(
+                    child: CircularProgressIndicator(color: MyTheme.orangeColor),
+                  );
+                } else if (state is FetchSearchSuccessState) {
+                  if (state.services.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "لا توجد نتائج. جرب كلمة أخرى!",
+                        style: textTheme.titleMedium?.copyWith(
+                          color: MyTheme.grayColor2,
+                        ),
+                      ),
+                    );
+                  }
+                  return RefreshIndicator(
+                    onRefresh: () async {
                       if (_lastQuery.isNotEmpty) {
                         context.read<HomeBloc>().add(FetchSearchEvent(_lastQuery));
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
+                    color: MyTheme.orangeColor,
+                    child: Container(
+                      color: MyTheme.whiteColor,
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: state.services.length,
+                        itemBuilder: (context, index) {
+                          return SearchResultCard(service: state.services[index]);
+                        },
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     ),
-                    child: Text(
-                      "إعادة المحاولة",
-                      style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                  );
+                } else if (state is FetchSearchErrorState) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "No Results",
+                          style: textTheme.titleMedium?.copyWith(
+                            color: MyTheme.grayColor2,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
+                  );
+                }
+                return Center(
+                  child: Text(
+                    "Find Something To Start 👀",
+                    style: textTheme.titleMedium?.copyWith(
+                      color: MyTheme.grayColor2,
                     ),
                   ),
-                ],
-              ),
-            );
-          }
-          return Center(
-            child: Text(
-              "ابحث عن شيء لتبدأ",
-              style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
+                );
+              },
             ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class SearchResultCard extends StatelessWidget {
-  final search.Data service;
-
-  const SearchResultCard({super.key, required this.service});
-
-  @override
-  Widget build(BuildContext context) {
-    if (service.serviceName == null && service.serviceDescription == null) {
-      return Card(
-        margin: EdgeInsets.only(bottom: 10.h),
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-        child: Padding(
-          padding: EdgeInsets.all(10.w),
-          child: Row(
-            children: [
-              Icon(Icons.error, size: 80.w, color: Colors.grey),
-              SizedBox(width: 15.w),
-              Expanded(
-                child: Text(
-                  "بيانات غير متاحة",
-                  style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
-                ),
-              ),
-            ],
           ),
-        ),
-      );
-    }
-
-    return Card(
-      margin: EdgeInsets.only(bottom: 10.h),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-      child: Padding(
-        padding: EdgeInsets.all(10.w),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.r),
-              child: Image.network(
-                service.serviceImage ?? '',
-                width: 80.w,
-                height: 80.h,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.error, size: 80.w),
-              ),
-            ),
-            SizedBox(width: 15.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    service.serviceName ?? 'غير متاح',
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 5.h),
-                  Text(
-                    service.serviceDescription ?? 'لا يوجد وصف',
-                    style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 5.h),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.yellow, size: 16.sp),
-                      SizedBox(width: 5.w),
-                      Text(
-                        service.serviceRating ?? '0.0',
-                        style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

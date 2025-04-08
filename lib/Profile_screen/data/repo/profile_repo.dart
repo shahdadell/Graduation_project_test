@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -95,7 +94,7 @@ class ProfileRepo {
       throw Exception('Error updating profile: ${e.message}');
     } catch (e) {
       log('Exception: $e');
-      throw Exception('Error updating profile: $e');
+      throw Exception('Error updating profile');
     }
   }
 }

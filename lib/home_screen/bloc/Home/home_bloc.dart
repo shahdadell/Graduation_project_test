@@ -1,3 +1,4 @@
+// lib/home_screen/bloc/Home/home_bloc.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
@@ -13,7 +14,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<FetchDiscountEvent>(fetchDiscountedItems);
     on<FetchServicesEvent>(fetchServicesByCategory);
     on<FetchServiceItemsEvent>(fetchServiceItems);
-    on<FetchSearchEvent>(fetchSearch); // إضافة الـ Search Event
+    on<FetchSearchEvent>(fetchSearch);
+    on<ClearSearchEvent>((event, emit) {
+      emit(HomeInitialState()); // لما يستقبل ClearSearchEvent يرجع للـ Initial State
+    });
   }
 
   Future<void> fetchHomeData(

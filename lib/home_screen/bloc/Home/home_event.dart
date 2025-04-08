@@ -1,3 +1,4 @@
+// lib/home_screen/bloc/Home/home_event.dart
 import 'package:graduation_project/home_screen/data/model/home_model_response/home_model_response.dart';
 
 abstract class HomeEvent {}
@@ -32,8 +33,9 @@ class FetchServiceItemsEvent extends HomeEvent {
   FetchServiceItemsEvent({required this.serviceId, required this.userId});
 }
 
-// الـ Event الجديد للسيرش
 class FetchSearchEvent extends HomeEvent {
   final String query;
   FetchSearchEvent(this.query);
 }
+
+class ClearSearchEvent extends HomeEvent {} // أضفنا ClearSearchEvent

@@ -1,3 +1,4 @@
+// lib/Profile_screen/UI/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,41 +8,18 @@ import 'package:graduation_project/Profile_screen/bloc/profile_state.dart';
 import 'package:graduation_project/Profile_screen/data/auth_utils.dart';
 import 'package:graduation_project/Profile_screen/data/repo/profile_repo.dart';
 import 'package:graduation_project/Theme/theme.dart';
+import 'package:graduation_project/Profile_screen/UI/edit_profile_screen.dart';
+import 'package:graduation_project/Profile_screen/UI/profile_widgets.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
+  static const String routeName = '/profile-screen';
+
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  late TextEditingController _phoneController;
-  late TextEditingController _passwordController;
-  bool _isEditing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController();
-    _emailController = TextEditingController();
-    _phoneController = TextEditingController();
-    _passwordController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme; // متغير لتقليل التكرار
+
     return FutureBuilder<int?>(
       future: AuthUtils.getUserIdDirectly(),
       builder: (context, snapshot) {
@@ -53,11 +31,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
           return Scaffold(
-            appBar: _buildAppBar(context),
+            appBar: _buildAppBar(context, textTheme),
             body: Center(
               child: Text(
                 "Error loading user ID or not logged in",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: MyTheme.grayColor2),
+                style: textTheme.titleMedium?.copyWith(color: MyTheme.grayColor2),
               ),
             ),
           );
@@ -66,24 +44,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return BlocProvider(
             create: (context) => ProfileBloc(ProfileRepo())..add(FetchProfileEvent(userId)),
             child: Scaffold(
-              appBar: _buildAppBar(context),
+              appBar: _buildAppBar(context, textTheme),
               body: Container(
-                color: MyTheme.whiteColor, // تتطابق مع scaffoldBackgroundColor
-                child: BlocConsumer<ProfileBloc, ProfileState>(
+                color: MyTheme.whiteColor,
+                child: BlocConsumer<ProfileBloc, ProfileState>( // استبدلنا BlocBuilder بـ BlocConsumer
                   listener: (context, state) {
-                    if (state is ProfileUpdated) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Profile updated successfully")),
-                      );
-                      setState(() {
-                        _isEditing = false;
-                        _passwordController.clear();
-                      });
-                    } else if (state is ProfileError) {
+                    if (state is ProfileError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );
-                      setState(() => _isEditing = true);
                     }
                   },
                   builder: (context, state) {
@@ -91,41 +60,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return Center(
                         child: CircularProgressIndicator(color: MyTheme.orangeColor),
                       );
-                    } else if (state is ProfileLoaded || state is ProfileUpdated) {
-                      final profile = (state is ProfileLoaded)
-                          ? state.profile.data
-                          : (state as ProfileUpdated).response.data;
-                      _nameController.text = profile?.usersName ?? '';
-                      _emailController.text = profile?.usersEmail ?? '';
-                      _phoneController.text = profile?.usersPhone ?? '';
-
+                    } else if (state is ProfileLoaded) {
+                      final profile = state.profile.data;
                       return SingleChildScrollView(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              _buildProfileImage(profile?.usersImage),
+                              buildProfileImage(profile?.usersImage, false),
                               SizedBox(height: 20.h),
-                              _buildProfileCard(context, profile, userId),
+                              _buildProfileCard(context, profile),
                               SizedBox(height: 20.h),
                               ElevatedButton(
                                 onPressed: () {
-                                  if (_isEditing) {
-                                    context.read<ProfileBloc>().add(
-                                      UpdateProfileEvent(
-                                        userId,
-                                        _nameController.text,
-                                        _emailController.text,
-                                        _phoneController.text,
-                                        password: _passwordController.text.isNotEmpty
-                                            ? _passwordController.text
-                                            : null,
-                                      ),
-                                    );
-                                  } else {
-                                    setState(() => _isEditing = true);
-                                  }
+                                  Navigator.pushNamed(
+                                    context,
+                                    EditProfileScreen.routeName,
+                                    arguments: {
+                                      'userId': userId,
+                                      'profile': profile,
+                                    },
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: MyTheme.orangeColor,
@@ -136,8 +92,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   elevation: 5,
                                 ),
                                 child: Text(
-                                  _isEditing ? "Save Changes" : "Edit Profile",
-                                  style: Theme.of(context).textTheme.displayMedium,
+                                  "Edit Profile",
+                                  style: textTheme.displayMedium,
                                 ),
                               ),
                             ],
@@ -151,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               "Error: ${state.message}",
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: MyTheme.redColor),
+                              style: textTheme.titleMedium?.copyWith(color: MyTheme.redColor),
                             ),
                             SizedBox(height: 20.h),
                             ElevatedButton(
@@ -167,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               child: Text(
                                 "Retry",
-                                style: Theme.of(context).textTheme.displayMedium,
+                                style: textTheme.displayMedium,
                               ),
                             ),
                           ],
@@ -188,7 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: Text(
                           "Load Profile",
-                          style: Theme.of(context).textTheme.displayMedium,
+                          style: textTheme.displayMedium,
                         ),
                       ),
                     );
@@ -202,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, TextTheme textTheme) {
     return AppBar(
       leading: InkWell(
         onTap: () => Navigator.pop(context),
@@ -213,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       title: Text(
         "My Profile",
-        style: Theme.of(context).textTheme.displayLarge,
+        style: textTheme.displayLarge,
       ),
       centerTitle: true,
       backgroundColor: MyTheme.orangeColor,
@@ -231,56 +187,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileImage(String? imageUrl) {
-    return Stack(
-      children: [
-        Container(
-          width: 130.w,
-          height: 130.h,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: MyTheme.orangeColor2, width: 3.w),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10.r,
-                spreadRadius: 2.r,
-              ),
-            ],
-          ),
-          child: ClipOval(
-            child: imageUrl != null && imageUrl.isNotEmpty
-                ? Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Icon(
-                Icons.person,
-                size: 60.w,
-                color: MyTheme.grayColor,
-              ),
-            )
-                : Icon(
-              Icons.person,
-              size: 60.w,
-              color: MyTheme.grayColor,
-            ),
-          ),
-        ),
-        if (_isEditing)
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: CircleAvatar(
-              radius: 20.r,
-              backgroundColor: MyTheme.orangeColor,
-              child: Icon(Icons.camera_alt, color: MyTheme.whiteColor, size: 20.w),
-            ),
-          ),
-      ],
-    );
-  }
+  Widget _buildProfileCard(BuildContext context, dynamic profile) {
+    final nameController = TextEditingController(text: profile?.usersName ?? '');
+    final emailController = TextEditingController(text: profile?.usersEmail ?? '');
+    final phoneController = TextEditingController(text: profile?.usersPhone ?? '');
 
-  Widget _buildProfileCard(BuildContext context, dynamic profile, String userId) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
@@ -289,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 10.r,
             spreadRadius: 2.r,
           ),
@@ -298,56 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildEditableField("Name", _nameController, Icons.person),
-          _buildEditableField("Email", _emailController, Icons.email),
-          _buildEditableField("Phone", _phoneController, Icons.phone),
-          if (_isEditing) _buildEditableField("Password", _passwordController, Icons.lock),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEditableField(String label, TextEditingController controller, IconData icon) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Row(
-        children: [
-          Icon(icon, color: MyTheme.orangeColor2, size: 20.w),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(color: MyTheme.grayColor2),
-                ),
-                SizedBox(height: 5.h),
-                _isEditing
-                    ? TextField(
-                  controller: controller,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  obscureText: label == "Password",
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: MyTheme.grayColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: MyTheme.grayColor),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-                  ),
-                )
-                    : Text(
-                  controller.text,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
+          buildEditableField(context, "Name", nameController, Icons.person), // أضفنا context
+          buildEditableField(context, "Email", emailController, Icons.email),
+          buildEditableField(context, "Phone", phoneController, Icons.phone),
         ],
       ),
     );
