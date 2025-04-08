@@ -1,3 +1,4 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -59,22 +60,22 @@ class MyApp extends StatelessWidget {
             OtpScreen.routName: (context) => const OtpScreen(),
             SearchScreen.routeName: (context) => const SearchScreen(),
             OtpScreenForgetPassword.routName: (context) =>
-                const OtpScreenForgetPassword(),
+            const OtpScreenForgetPassword(),
             ForgetPassword.routName: (context) => const ForgetPassword(),
             ResetPassword.routName: (context) {
               final String email =
-                  ModalRoute.of(context)!.settings.arguments as String;
+              ModalRoute.of(context)!.settings.arguments as String;
               return ResetPassword(email: email);
             },
             ServiceItemsScreen.routeName: (context) {
-              final int serviceId =
-                  ModalRoute.of(context)!.settings.arguments as int;
-              return ServiceItemsScreen(serviceId: serviceId);
+              final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+              return ServiceItemsScreen(serviceId: args['serviceId']);
             },
             ProfileScreen.routeName: (context) => const ProfileScreen(),
             EditProfileScreen.routeName: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
+              as Map<String, dynamic>;
               return EditProfileScreen(
                 userId: args['userId'],
                 profile: args['profile'],

@@ -5,12 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/home_screen/UI/TopBarWidget/TopBarWidget.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_bloc.dart';
-import 'package:graduation_project/home_screen/UI/CategoriesGridWidget/CategoriesGridWidget.dart';
-import 'package:graduation_project/home_screen/UI/DiscountListWidget/DiscountListWidget.dart';
-import 'package:graduation_project/home_screen/UI/SearchFieldWidget/SearchFieldWidget.dart';
-import 'package:graduation_project/home_screen/UI/SpecialOfferCarouselWidget/SpecialOfferCarouselWidget.dart';
-import 'package:graduation_project/home_screen/UI/TopSellingListWidget/TopSellingListWidget.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
+import '../CategoriesGridWidget/CategoriesGridWidget.dart';
+import '../DiscountListWidget/DiscountListWidget.dart';
+import '../SearchFieldWidget/SearchFieldWidget.dart';
+import '../SearchFieldWidget/SearchScreen.dart';
+import '../SpecialOfferCarouselWidget/SpecialOfferCarouselWidget.dart';
+import '../TopSellingListWidget/TopSellingListWidget.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routName = 'HomeScreen';
@@ -50,10 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
           print("Adding FetchTopSellingEvent");
         }
         bloc.add(FetchTopSellingEvent());
-        if (kDebugMode) {
-          print("Adding FetchOffersEvent");
-        }
-        bloc.add(FetchOffersEvent()); // إضافة الـ FetchOffersEvent
         return bloc;
       },
       child: Scaffold(
@@ -72,8 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   const TopBarWidget(),
                   const SearchFieldWidget(
-                    isClickable: true,
-                  ),
+                    isClickable: true, // هنا بنخليه ينقل لـ SearchScreen
+                  ), // مش محتاجين onSearch لأن البحث مش هيحصل هنا
                   SizedBox(height: 10.h),
                   const SpecialOfferCarouselWidget(),
                   SizedBox(height: 15.h),

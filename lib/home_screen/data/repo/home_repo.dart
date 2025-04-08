@@ -34,14 +34,16 @@ class HomeRepo {
     }
   }
 
-  static Future<OffersModel> fetchOffers() async {
+  static Future<OffersModelResponse> fetchOffers() async {
     try {
-      var response = await DioProvider.get(endpoint: AppEndpoints.offersSlider);
+      var response = await DioProvider.get(
+        endpoint: "https://abdulrahmanantar.com/outbye/offers.php",
+      );
       log('Fetch Offers Response Status Code: ${response.statusCode}');
       log('Fetch Offers Response Data: ${response.data}');
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
-        return OffersModel.fromJson(response.data);
+        return OffersModelResponse.fromJson(response.data);
       } else {
         throw Exception(
             'Failed to fetch offers: ${response.data['message'] ?? 'Unknown error'}');
