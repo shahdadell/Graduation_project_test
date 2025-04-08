@@ -16,7 +16,7 @@ class SearchFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 42.h,
-      margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      margin: EdgeInsets.symmetric(horizontal: 12.w,),
       padding: EdgeInsets.symmetric(horizontal: 14.w),
       decoration: BoxDecoration(
         color: Colors.grey[200],

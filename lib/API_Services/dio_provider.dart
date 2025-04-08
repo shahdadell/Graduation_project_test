@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:graduation_project/API_Services/endpoints.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
-import 'dart:convert';
 
 class DioProvider {
   static late Dio _dio;
@@ -40,10 +40,19 @@ class DioProvider {
         String responseData = response.data.toString().trim();
         print('Trimmed Response: $responseData');
 
-        // التحقق من إن الاستجابة كاملة (تحتوي على { و })
-        if (!responseData.startsWith('{') || !responseData.endsWith('}')) {
-          print('Error: Incomplete JSON response');
-          throw Exception('Incomplete JSON response: $responseData');
+        // التعامل مع الـ Response المكرر
+        if (responseData.contains('}{')) {
+          // اقسم الـ Response عند الـ `}{`
+          final parts = responseData.split('}{');
+          // خد الجزء التاني (اللي فيه الـ data) وأضف `{` في البداية و `}` في النهاية
+          responseData = '{${parts[1]}';
+          print('Fixed Response: $responseData');
+        } else {
+          // التحقق من إن الاستجابة كاملة (تحتوي على { و })
+          if (!responseData.startsWith('{') || !responseData.endsWith('}')) {
+            print('Error: Incomplete JSON response');
+            throw Exception('Incomplete JSON response: $responseData');
+          }
         }
 
         // محاولة تحليل الاستجابة كـ JSON
@@ -151,7 +160,7 @@ class DioProvider {
         data: data,
         options: Options(
           headers: preparedHeaders,
-          responseType: ResponseType.plain, // نضيف ده عشان نستقبل الاستجابة كنص خام
+          responseType: ResponseType.plain,
         ),
       );
       print('Response: ${response.data}');

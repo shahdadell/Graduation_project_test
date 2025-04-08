@@ -31,8 +31,8 @@ Widget homeTopBar(BuildContext context) {
         },
         overlayColor:  WidgetStatePropertyAll(MyTheme.transparent),
         child:  Icon(
-          Icons.person,
-          size: 24,
+          Icons.person_2_sharp,
+          size: 26,
           color: MyTheme.blackColor,
         ),
         // لو عندك صورة للـ profile في AppImages، استخدمي Image.asset:
