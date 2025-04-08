@@ -25,6 +25,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           event.username,
           event.email,
           event.phone,
+          event.password, // إضافة كلمة السر
+          event.image, // إضافة الصورة
         );
         if (response.status == 'success') {
           emit(ProfileUpdated(response));

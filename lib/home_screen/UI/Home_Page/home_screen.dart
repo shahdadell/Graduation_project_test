@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const TopBarWidget(),
-                  SearchFieldWidget(
+                  const SearchFieldWidget(
                     isClickable: true, // هنا بنخليه ينقل لـ SearchScreen
                   ), // مش محتاجين onSearch لأن البحث مش هيحصل هنا
                   SizedBox(height: 10.h),

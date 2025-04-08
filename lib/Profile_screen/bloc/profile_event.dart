@@ -1,3 +1,5 @@
+import 'dart:io';
+
 abstract class ProfileEvent {}
 
 class FetchProfileEvent extends ProfileEvent {
@@ -11,6 +13,15 @@ class UpdateProfileEvent extends ProfileEvent {
   final String username;
   final String email;
   final String phone;
+  final String? password; // إضافة كلمة السر
+  final File? image; // إضافة الصورة
 
-  UpdateProfileEvent(this.userId, this.username, this.email, this.phone);
+  UpdateProfileEvent(
+    this.userId,
+    this.username,
+    this.email,
+    this.phone, {
+    this.password,
+    this.image,
+  });
 }
