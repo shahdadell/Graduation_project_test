@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/App_Images/app_images.dart';
+import 'package:graduation_project/Profile_screen/bloc/profile_bloc.dart';
+import 'package:graduation_project/Profile_screen/bloc/profile_event.dart';
+import 'package:graduation_project/Profile_screen/bloc/profile_state.dart';
+import 'package:graduation_project/Profile_screen/data/repo/profile_repo.dart';
 import 'package:graduation_project/Theme/dialog_utils.dart';
 import 'package:graduation_project/Theme/dialogs.dart';
 import 'package:graduation_project/Theme/theme.dart';
@@ -10,6 +14,7 @@ import 'package:graduation_project/auth/data/repository/auth_repository/data_sou
 import 'package:graduation_project/auth/data/repository/auth_repository/repository/auth_repository_impl.dart';
 import 'package:graduation_project/auth/domain/repository/repository/auth_repository_contract.dart';
 import 'package:graduation_project/auth/forget_password/check_email/forget_password_bottom_sheet.dart';
+import 'package:graduation_project/auth/sign_up_screen/sign_up_screen.dart';
 import 'package:graduation_project/auth/sing_in_screen/cubit/login_screen_viewmodel.dart';
 import 'package:graduation_project/auth/sing_in_screen/cubit/login_state.dart';
 import 'package:graduation_project/auth/sing_in_screen/text_filed_login.dart';
@@ -29,16 +34,10 @@ class _SignInScreenState extends State<SignInScreen> {
   LoginScreenViewmodel viewmodel = LoginScreenViewmodel(
     repositoryContract: injectAuthRepositoryContract(),
   );
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    // checkToken(); // نعلق التحقق التلقائي مؤقتًا
   }
 
   void checkToken() async {
@@ -50,8 +49,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    viewmodel.emailController.dispose();
+    viewmodel.passwordController.dispose();
     super.dispose();
   }
 
@@ -59,7 +58,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return BlocListener<LoginScreenViewmodel, LoginState>(
       bloc: viewmodel,
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LoginLoadingState) {
           showLoadingDialog(context);
         } else if (state is LoginErrorState) {
@@ -71,10 +70,30 @@ class _SignInScreenState extends State<SignInScreen> {
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-          Navigator.of(context).pushReplacementNamed(
-            HomeScreen.routName,
-            arguments: viewmodel.emailController.text,
-          );
+          // جيب الـ userId من الـ response
+          final userId = state.response.userId; // استخدمنا userId مباشرة من LoginResponse
+          if (userId != null) {
+            await AppLocalStorage.cacheData('user_id', userId);
+            await AppLocalStorage.cacheData('token', state.response.token); // احفظ الـ token كمان
+
+            // اعمل Bloc لجلب الـ Profile
+            final profileBloc = ProfileBloc(ProfileRepo());
+            profileBloc.add(FetchProfileEvent(userId.toString()));
+            await for (final profileState in profileBloc.stream) {
+              if (profileState is ProfileLoaded) {
+                final username = profileState.profile.data?.usersName;
+                await AppLocalStorage.cacheData(AppLocalStorage.userNameKey, username);
+                break; // اخرج من اللوب لما الـ Profile يتحمل
+              } else if (profileState is ProfileError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to load profile: ${profileState.message}')),
+                );
+                break;
+              }
+            }
+          }
+
+          Navigator.of(context).pushReplacementNamed(HomeScreen.routName);
         }
       },
       child: Scaffold(
@@ -84,11 +103,11 @@ class _SignInScreenState extends State<SignInScreen> {
               Navigator.of(context).pushReplacementNamed(MainScreen.routName);
             },
             child: Padding(
-              padding: EdgeInsets.all(10.w), // تقليل الـ padding
+              padding: EdgeInsets.all(10.w),
               child: Icon(
                 Icons.arrow_back_ios,
                 color: MyTheme.blackColor,
-                size: 24.w, // تقليل حجم الأيقونة
+                size: 24.w,
               ),
             ),
           ),
@@ -96,35 +115,29 @@ class _SignInScreenState extends State<SignInScreen> {
           backgroundColor: Colors.transparent,
           title: Text(
             "Sign in",
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(fontSize: 18.sp), // تقليل حجم العنوان
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18.sp),
           ),
         ),
         body: Form(
           key: viewmodel.formKey,
           child: Padding(
-            padding: EdgeInsets.all(20.w), // تقليل الـ padding الكلي
+            padding: EdgeInsets.all(20.w),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Image.asset(
                     AppImages.sign,
-                    width: 140.w, // تقليل حجم الصورة
+                    width: 140.w,
                     height: 140.h,
                   ),
-                  SizedBox(height: 15.h), // تقليل المسافة
+                  SizedBox(height: 15.h),
                   Text(
                     "Email Address",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(fontSize: 14.sp), // تقليل حجم النص
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 14.sp),
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
                   TextFiledLogin(
                     text: 'User name / Email',
                     type: TextInputType.emailAddress,
@@ -136,7 +149,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         return "E-mail is required";
                       }
                       bool emailValid = RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                           .hasMatch(value);
                       if (!emailValid) {
                         return 'Please Enter Valid Email';
@@ -144,16 +157,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 15.h), // تقليل المسافة
+                  SizedBox(height: 15.h),
                   Text(
                     "Password",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(fontSize: 14.sp), // تقليل حجم النص
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 14.sp),
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
                   TextFiledLogin(
                     controller: viewmodel.passwordController,
                     text: 'Password',
@@ -168,7 +178,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -179,49 +189,40 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: Text(
                           "Forget Password?",
                           textAlign: TextAlign.end,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontSize: 12.sp), // تقليل حجم النص
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 15.h), // تقليل المسافة
+                  SizedBox(height: 15.h),
                   ElevatedButton(
                     onPressed: () {
                       viewmodel.SignIn(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 6.h), // تقليل الـ padding
+                      padding: EdgeInsets.symmetric(vertical: 6.h),
                       backgroundColor: MyTheme.orangeColor,
-                      minimumSize: Size(double.infinity, 35.h), // تقليل ارتفاع الزر
+                      minimumSize: Size(double.infinity, 35.h),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r), // زوايا أنيقة
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
                     child: Text(
                       "Sign in",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall!
-                          .copyWith(fontSize: 13.sp), // تقليل حجم النص
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 13.sp),
                     ),
                   ),
-                  SizedBox(height: 30.h), // تقليل المسافة الكبيرة
+                  SizedBox(height: 30.h),
                   Divider(indent: 5.w, endIndent: 5.w),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(10.w), // تقليل الـ padding
+                        padding: EdgeInsets.all(10.w),
                         child: Text(
                           "or sign in with",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontSize: 12.sp), // تقليل حجم النص
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                         ),
                       ),
                     ],
@@ -232,14 +233,14 @@ class _SignInScreenState extends State<SignInScreen> {
                       InkWell(
                         onTap: () {},
                         child: Material(
-                          elevation: 3, // تقليل الظل لمظهر أنيق
+                          elevation: 3,
                           borderRadius: BorderRadius.circular(10.r),
                           shadowColor: Colors.black.withOpacity(0.2),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.r),
                             child: Image.asset(
                               AppImages.google,
-                              width: 40.w, // تقليل حجم الأيقونة
+                              width: 40.w,
                               height: 40.h,
                             ),
                           ),
@@ -267,5 +268,6 @@ class _SignInScreenState extends State<SignInScreen> {
 AuthRepositoryContract injectAuthRepositoryContract() {
   return AuthRepositoryImpl(
       remoteDataSource:
-      AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
+          AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
 }
+

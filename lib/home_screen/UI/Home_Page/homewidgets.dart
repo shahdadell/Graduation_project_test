@@ -8,9 +8,8 @@ import 'package:graduation_project/Theme/style.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/homevariables.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 
-
 Widget homeTopBar(BuildContext context) {
-  String greeting  = getGreetingMessage();
+  String greeting = getGreetingMessage();
   final int? userId = AppLocalStorage.getData('user_id'); // جيب الـ userId من الـ storage
 
   return Row(
@@ -29,18 +28,12 @@ Widget homeTopBar(BuildContext context) {
             );
           }
         },
-        overlayColor:  WidgetStatePropertyAll(MyTheme.transparent),
-        child:  Icon(
+        overlayColor: WidgetStatePropertyAll(MyTheme.transparent),
+        child: Icon(
           Icons.person_2_sharp,
           size: 26,
           color: MyTheme.blackColor,
         ),
-        // لو عندك صورة للـ profile في AppImages، استخدمي Image.asset:
-        // child: Image.asset(
-        //   AppImages.profileIcon, // استبدلي باسم الصورة الفعلي
-        //   width: 24,
-        //   height: 24,
-        // ),
       ),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -79,10 +72,12 @@ Widget homeTopBar(BuildContext context) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Text('Loading...');
                     }
+                    // لو Guest (userId == null)، الاسم هيبقى فاضي
+                    String displayName = userId == null ? "" : (snapshot.data ?? "Guest");
                     return SizedBox(
                       width: 142,
                       child: Text(
-                        snapshot.data ?? "Guest",
+                        displayName,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.rubik(
                           fontSize: 16,
@@ -125,8 +120,7 @@ Widget homeTopBar(BuildContext context) {
           } else {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const CartScreen()), // شيل الـ userId
+              MaterialPageRoute(builder: (context) => const CartScreen()),
             );
           }
         },
@@ -140,7 +134,6 @@ Widget homeTopBar(BuildContext context) {
     ],
   );
 }
-
 
 Widget carouselSliderImage(String image) {
   return ClipRRect(
@@ -172,13 +165,11 @@ Widget horizontalListTitle(String text) {
   );
 }
 
-Widget horizontalList(List list,) {
+Widget horizontalList(List list) {
+  final int? userId = AppLocalStorage.getData('user_id'); // جيب الـ userId
   return Container(
     height: 220,
-    margin: const EdgeInsets.only(
-      top: 10,
-      left: 10,
-    ),
+    margin: const EdgeInsets.only(top: 10, left: 10),
     child: ListView.builder(
       shrinkWrap: true,
       itemCount: list.length,
@@ -193,9 +184,7 @@ Widget horizontalList(List list,) {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(12),
-                    ),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Image.asset(
                       item.image!,
                       height: 140,
@@ -232,8 +221,7 @@ Widget horizontalList(List list,) {
                       children: [
                         Text(
                           item.destination!,
-                          style: textStyle(
-                              14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                         const SizedBox(width: 4),
                         Container(
@@ -250,16 +238,49 @@ Widget horizontalList(List list,) {
                         const SizedBox(width: 2),
                         Text(
                           item.rate!,
-                          style: textStyle(
-                              14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                       ],
                     ),
-                    Image.asset(
-                      AppImages.heart,
-                      width: 20,
-                      height: 20,
-                    )
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            if (userId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Please log in to add to favorites')),
+                              );
+                            } else {
+                              // منطق إضافة للمفضلة هنا
+                              print("Added to favorites");
+                            }
+                          },
+                          child: Image.asset(
+                            AppImages.heart,
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () {
+                            if (userId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Please log in to add to cart')),
+                              );
+                            } else {
+                              // منطق إضافة للعربة هنا
+                              print("Added to cart");
+                            }
+                          },
+                          child: Icon(
+                            Icons.add_shopping_cart,
+                            size: 20,
+                            color: MyTheme.orangeColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               )
@@ -271,13 +292,10 @@ Widget horizontalList(List list,) {
   );
 }
 
-Widget horizontalDishesList(List list,) {
+Widget horizontalDishesList(List list) {
   return Container(
     height: 220,
-    margin: const EdgeInsets.only(
-      top: 10,
-      left: 10,
-    ),
+    margin: const EdgeInsets.only(top: 10, left: 10),
     child: ListView.builder(
       shrinkWrap: true,
       itemCount: list.length,
@@ -310,15 +328,10 @@ Widget horizontalDishesList(List list,) {
   );
 }
 
-Widget horizontalRestaurantList(
-  List list,
-) {
+Widget horizontalRestaurantList(List list) {
   return Container(
     height: 220,
-    margin: const EdgeInsets.only(
-      top: 10,
-      left: 10,
-    ),
+    margin: const EdgeInsets.only(top: 10, left: 10),
     child: ListView.builder(
       shrinkWrap: true,
       itemCount: list.length,
@@ -331,9 +344,7 @@ Widget horizontalRestaurantList(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(4),
-                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                 child: Image.asset(
                   item.icon!,
                   height: 140,
@@ -356,8 +367,7 @@ Widget horizontalRestaurantList(
                   const SizedBox(width: 2),
                   Text(
                     item.location!,
-                    style:
-                        textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
+                    style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
                   )
                 ],
               )
@@ -370,10 +380,9 @@ Widget horizontalRestaurantList(
 }
 
 Widget recommendedListView(List list) {
+  final int? userId = AppLocalStorage.getData('user_id'); // جيب الـ userId
   return Padding(
-    padding: const EdgeInsets.only(
-      top: 10,
-    ),
+    padding: const EdgeInsets.only(top: 10),
     child: ListView.builder(
       shrinkWrap: true,
       itemCount: list.length,
@@ -389,9 +398,7 @@ Widget recommendedListView(List list) {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(12),
-                    ),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Image.asset(
                       item.image!,
                       height: 142,
@@ -430,8 +437,7 @@ Widget recommendedListView(List list) {
                       children: [
                         Text(
                           item.destination!,
-                          style: textStyle(
-                              14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                         const SizedBox(width: 4),
                         Container(
@@ -448,16 +454,49 @@ Widget recommendedListView(List list) {
                         const SizedBox(width: 2),
                         Text(
                           item.rate!,
-                          style: textStyle(
-                              14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                       ],
                     ),
-                    Image.asset(
-                      AppImages.heart,
-                      width: 20,
-                      height: 20,
-                    )
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            if (userId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Please log in to add to favorites')),
+                              );
+                            } else {
+                              // منطق إضافة للمفضلة هنا
+                              print("Added to favorites");
+                            }
+                          },
+                          child: Image.asset(
+                            AppImages.heart,
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () {
+                            if (userId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Please log in to add to cart')),
+                              );
+                            } else {
+                              // منطق إضافة للعربة هنا
+                              print("Added to cart");
+                            }
+                          },
+                          child: Icon(
+                            Icons.add_shopping_cart,
+                            size: 20,
+                            color: MyTheme.orangeColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
