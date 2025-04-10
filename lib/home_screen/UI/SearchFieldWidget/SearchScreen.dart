@@ -7,9 +7,8 @@ import 'package:graduation_project/home_screen/UI/SearchFieldWidget/SearchFieldW
 import 'package:graduation_project/home_screen/bloc/Home/home_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_state.dart';
-import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart' as search;
-
-import 'SearchResultCard.dart';
+import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart' as searchModel;
+import 'package:graduation_project/home_screen/UI/SearchFieldWidget/SearchResultCard.dart';
 
 class SearchScreen extends StatefulWidget {
   static const String routeName = 'SearchScreen';
@@ -22,10 +21,19 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   Timer? _debounce;
   String _lastQuery = '';
+  late HomeBloc _homeBloc; // نحفظ مرجع للـ HomeBloc
+
+  @override
+  void initState() {
+    super.initState();
+    _homeBloc = context.read<HomeBloc>(); // نحصل على الـ HomeBloc هنا
+  }
 
   @override
   void dispose() {
     _debounce?.cancel();
+    // نستخدم المرجع المحفوظ بدل الـ context
+    _homeBloc.add(ClearSearchEvent());
     super.dispose();
   }
 
@@ -33,10 +41,11 @@ class _SearchScreenState extends State<SearchScreen> {
     _lastQuery = query;
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (query.trim().isEmpty) { // تأكدنا إن النص فاضي حتى لو فيه مسافات
-        context.read<HomeBloc>().add(ClearSearchEvent());
+      print('Search Query: $query'); // للتصحيح
+      if (query.trim().isEmpty) {
+        _homeBloc.add(ClearSearchEvent());
       } else {
-        context.read<HomeBloc>().add(FetchSearchEvent(query));
+        _homeBloc.add(FetchSearchEvent(query));
       }
     });
   }
@@ -85,25 +94,27 @@ class _SearchScreenState extends State<SearchScreen> {
           Expanded(
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
+                print('Current State: $state'); // للتصحيح
                 if (state is FetchSearchLoadingState) {
                   return Center(
                     child: CircularProgressIndicator(color: MyTheme.orangeColor),
                   );
                 } else if (state is FetchSearchSuccessState) {
-                  if (state.services.isEmpty) {
+                  if (state.services.isEmpty && state.items.isEmpty) {
                     return Center(
                       child: Text(
-                        "لا توجد نتائج. جرب كلمة أخرى!",
+                        "No results found. Try another keyword!",
                         style: textTheme.titleMedium?.copyWith(
                           color: MyTheme.grayColor2,
                         ),
                       ),
                     );
                   }
+                  final allResults = [...state.services, ...state.items];
                   return RefreshIndicator(
                     onRefresh: () async {
                       if (_lastQuery.isNotEmpty) {
-                        context.read<HomeBloc>().add(FetchSearchEvent(_lastQuery));
+                        _homeBloc.add(FetchSearchEvent(_lastQuery));
                       }
                     },
                     color: MyTheme.orangeColor,
@@ -112,9 +123,15 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                         physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: state.services.length,
+                        itemCount: allResults.length,
                         itemBuilder: (context, index) {
-                          return SearchResultCard(service: state.services[index]);
+                          final result = allResults[index];
+                          if (result is searchModel.Data) {
+                            return SearchResultCard(service: result);
+                          } else if (result is searchModel.ItemData) {
+                            return ItemResultCard(item: result);
+                          }
+                          return SizedBox.shrink();
                         },
                       ),
                     ),
@@ -125,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "No Results",
+                          "Error: ${state.message}",
                           style: textTheme.titleMedium?.copyWith(
                             color: MyTheme.grayColor2,
                           ),
@@ -135,7 +152,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       ],
                     ),
                   );
+                } else if (state is HomeInitialState) {
+                  return Center(
+                    child: Text(
+                      "Find Something To Start 👀",
+                      style: textTheme.titleMedium?.copyWith(
+                        color: MyTheme.grayColor2,
+                      ),
+                    ),
+                  );
                 }
+                // لأي حالة تانية
                 return Center(
                   child: Text(
                     "Find Something To Start 👀",

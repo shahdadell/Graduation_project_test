@@ -19,6 +19,10 @@ Widget buildDiscountCard(BuildContext context, dynamic item) {
     child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
+        // border: Border.all(
+        //   color: MyTheme.orangeColor, // لون البوردر
+        //   width: 1,        // سمك البوردر
+        // ),
         gradient: LinearGradient(
           colors: [Colors.white, Colors.grey[50]!],
           begin: Alignment.topLeft,
@@ -33,6 +37,7 @@ Widget buildDiscountCard(BuildContext context, dynamic item) {
           ),
         ],
       ),
+
       child: Row(
         children: [
           ClipRRect(
