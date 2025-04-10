@@ -1,4 +1,3 @@
-// lib/Profile_screen/UI/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +9,8 @@ import 'package:graduation_project/Profile_screen/data/repo/profile_repo.dart';
 import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/Profile_screen/UI/edit_profile_screen.dart';
 import 'package:graduation_project/Profile_screen/UI/profile_widgets.dart';
+import 'package:graduation_project/local_data/shared_preference.dart';
+import 'package:graduation_project/Main_Screen/main_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String routeName = '/profile-screen';
@@ -18,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme; // متغير لتقليل التكرار
+    final textTheme = Theme.of(context).textTheme;
 
     return FutureBuilder<int?>(
       future: AuthUtils.getUserIdDirectly(),
@@ -47,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
               appBar: _buildAppBar(context, textTheme),
               body: Container(
                 color: MyTheme.whiteColor,
-                child: BlocConsumer<ProfileBloc, ProfileState>( // استبدلنا BlocBuilder بـ BlocConsumer
+                child: BlocConsumer<ProfileBloc, ProfileState>(
                   listener: (context, state) {
                     if (state is ProfileError) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,6 +94,30 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                                 child: Text(
                                   "Edit Profile",
+                                  style: textTheme.displayMedium,
+                                ),
+                              ),
+                              SizedBox(height: 15.h), // مسافة بين الزرارين
+                              ElevatedButton(
+                                onPressed: () async {
+                                  // مسح البيانات من SharedPreferences
+                                  await AppLocalStorage.clearData();
+                                  // الانتقال لصفحة MainScreen
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    MainScreen.routName,
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: MyTheme.orangeColor, // لون مختلف للتسجيل الخروج
+                                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  elevation: 5,
+                                ),
+                                child: Text(
+                                  "Log Out",
                                   style: textTheme.displayMedium,
                                 ),
                               ),
@@ -209,7 +234,7 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildEditableField(context, "Name", nameController, Icons.person), // أضفنا context
+          buildEditableField(context, "Name", nameController, Icons.person),
           buildEditableField(context, "Email", emailController, Icons.email),
           buildEditableField(context, "Phone", phoneController, Icons.phone),
         ],

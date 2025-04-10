@@ -16,7 +16,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<FetchServiceItemsEvent>(fetchServiceItems);
     on<FetchSearchEvent>(fetchSearch);
     on<ClearSearchEvent>((event, emit) {
-      emit(HomeInitialState()); // لما يستقبل ClearSearchEvent يرجع للـ Initial State
+      print('ClearSearchEvent Triggered'); // للتصحيح
+      emit(HomeInitialState());
     });
   }
 
@@ -115,7 +116,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(FetchSearchLoadingState());
     try {
       final searchResults = await HomeRepo.fetchSearch(event.query);
-      emit(FetchSearchSuccessState(services: searchResults));
+      final services = searchResults.services?.data ?? [];
+      final items = searchResults.items?.data ?? [];
+      emit(FetchSearchSuccessState(services: services, items: items));
     } catch (e) {
       emit(FetchSearchErrorState(message: e.toString()));
     }

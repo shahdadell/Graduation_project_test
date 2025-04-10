@@ -5,6 +5,7 @@ import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/auth/sign_up_screen/sign_up_screen.dart';
 import 'package:graduation_project/auth/sing_in_screen/sign_in_screen.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/home_screen.dart';
+import 'package:graduation_project/local_data/shared_preference.dart';
 
 class MainScreen extends StatelessWidget {
   static const String routName = 'LoginScreen';
@@ -46,9 +47,11 @@ class MainScreen extends StatelessWidget {
                       Navigator.of(context).pushNamed(SignInScreen.routName);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 8.h), // تقليل الـ padding
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8.h), // تقليل الـ padding
                       backgroundColor: MyTheme.orangeColor,
-                      minimumSize: Size(double.infinity, 15.h), // عرض كامل وارتفاع مناسب
+                      minimumSize:
+                          Size(double.infinity, 15.h), // عرض كامل وارتفاع مناسب
                     ),
                     child: Text(
                       textAlign: TextAlign.center,
@@ -96,9 +99,11 @@ class MainScreen extends StatelessWidget {
                       //     .pushReplacementNamed(HomeScreen.routName);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 8.h), // تقليل الـ padding
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8.h), // تقليل الـ padding
                       backgroundColor: MyTheme.blueColor,
-                      minimumSize: Size(double.infinity, 15.h), // عرض كامل وارتفاع مناسب
+                      minimumSize:
+                          Size(double.infinity, 15.h), // عرض كامل وارتفاع مناسب
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +155,14 @@ class MainScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      await AppLocalStorage.clearData();
+                      final int? userId = AppLocalStorage.getData('user_id');
+                      final String? username =
+                          AppLocalStorage.getData(AppLocalStorage.userNameKey)
+                              as String?;
+                      print(
+                          "After clearData - User ID: $userId, Username: $username");
                       Navigator.of(context)
                           .pushReplacementNamed(HomeScreen.routName);
                     },

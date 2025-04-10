@@ -11,10 +11,12 @@ class SpecialOfferCarouselWidget extends StatefulWidget {
   const SpecialOfferCarouselWidget({super.key});
 
   @override
-  State<SpecialOfferCarouselWidget> createState() => _SpecialOfferCarouselWidgetState();
+  State<SpecialOfferCarouselWidget> createState() =>
+      _SpecialOfferCarouselWidgetState();
 }
 
-class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget> {
+class _SpecialOfferCarouselWidgetState
+    extends State<SpecialOfferCarouselWidget> {
   int currentIndex = 0;
 
   @override
@@ -27,7 +29,8 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
           child: Text(
             "Special Offer",
             style: TextStyle(
-              fontSize: 18.sp, // صغرته من 18.sp لـ 20.sp مع وزن أثقل لتباين أفضل
+              fontSize:
+                  18.sp, // صغرته من 18.sp لـ 20.sp مع وزن أثقل لتباين أفضل
               fontWeight: FontWeight.bold,
               color: MyTheme.blackColor,
               shadows: [
@@ -36,7 +39,7 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                   offset: Offset(1, 1),
                   blurRadius: 3.r,
                 ),
-              ],// غيرته للون الثيم عشان التناسق
+              ], // غيرته للون الثيم عشان التناسق
             ),
           ),
         ),
@@ -65,10 +68,12 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                         final item = state.items[index];
                         return Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r), // صغرته من 12.r لـ 10.r
+                            borderRadius: BorderRadius.circular(
+                                10.r), // صغرته من 12.r لـ 10.r
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.15), // خففنا الـ Shadow
+                                color: Colors.grey
+                                    .withOpacity(0.15), // خففنا الـ Shadow
                                 blurRadius: 4.r,
                                 spreadRadius: 1.r,
                               ),
@@ -82,7 +87,8 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                                 Image.network(
                                   item.itemsImage ?? '',
                                   fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
                                     if (loadingProgress == null) return child;
                                     return Container(
                                       color: Colors.grey[200],
@@ -109,7 +115,8 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        Colors.black.withOpacity(0.4), // زاد الـ Opacity شوية للوضوح
+                                        Colors.black.withOpacity(
+                                            0.4), // زاد الـ Opacity شوية للوضوح
                                         Colors.transparent,
                                       ],
                                       begin: Alignment.bottomCenter,
@@ -117,7 +124,8 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                                     ),
                                   ),
                                 ),
-                                if (item.itemsDiscount != null && item.itemsDiscount != 0)
+                                if (item.itemsDiscount != null &&
+                                    item.itemsDiscount != 0)
                                   Positioned(
                                     top: 6.h, // صغرنا من 8.h
                                     right: 6.w, // صغرنا من 8.w
@@ -128,7 +136,8 @@ class _SpecialOfferCarouselWidgetState extends State<SpecialOfferCarouselWidget>
                                       ),
                                       decoration: BoxDecoration(
                                         color: Colors.red,
-                                        borderRadius: BorderRadius.circular(6.r), // صغرنا من 8.r
+                                        borderRadius: BorderRadius.circular(
+                                            6.r), // صغرنا من 8.r
                                       ),
                                       child: Text(
                                         "${item.itemsDiscount}% OFF",

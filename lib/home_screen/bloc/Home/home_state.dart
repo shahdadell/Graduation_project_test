@@ -96,8 +96,9 @@ class FetchServiceItemsErrorState extends HomeState {
 class FetchSearchLoadingState extends HomeState {}
 
 class FetchSearchSuccessState extends HomeState {
-  final List<search.Data> services; // استخدام search.Data
-  FetchSearchSuccessState({required this.services});
+  final List<search.Data> services; // الخدمات
+  final List<search.ItemData> items; // العناصر
+  FetchSearchSuccessState({required this.services, required this.items});
 }
 
 class FetchSearchErrorState extends HomeState {

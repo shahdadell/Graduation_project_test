@@ -34,16 +34,14 @@ class HomeRepo {
     }
   }
 
-  static Future<OffersModelResponse> fetchOffers() async {
+  static Future<OffersModel> fetchOffers() async {
     try {
-      var response = await DioProvider.get(
-        endpoint: "https://abdulrahmanantar.com/outbye/offers.php",
-      );
+      var response = await DioProvider.get(endpoint: AppEndpoints.offersSlider);
       log('Fetch Offers Response Status Code: ${response.statusCode}');
       log('Fetch Offers Response Data: ${response.data}');
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
-        return OffersModelResponse.fromJson(response.data);
+        return OffersModel.fromJson(response.data);
       } else {
         throw Exception(
             'Failed to fetch offers: ${response.data['message'] ?? 'Unknown error'}');
@@ -166,12 +164,13 @@ class HomeRepo {
     }
   }
 
-  static Future<List<search.Data>> fetchSearch(String query) async {
+  static Future<search.SearchModelResponse> fetchSearch(String query) async {
     try {
       final token = await AppLocalStorage.getData('token');
 
       var formData = FormData.fromMap({
-        'search': query, // تغيير من 'query' إلى 'search' عشان يتطابق مع الباك-إند
+        'search':
+            query, // تغيير من 'query' إلى 'search' عشان يتطابق مع الباك-إند
       });
       var response = await DioProvider.post(
         endpoint: AppEndpoints.search,
@@ -187,27 +186,28 @@ class HomeRepo {
 
       if (response.statusCode == 200) {
         if (response.data['status'] == 'success') {
-          final searchResponse = search.SearchModelResponse.fromJson(response.data);
+          final searchResponse =
+              search.SearchModelResponse.fromJson(response.data);
           log('Parsed SearchModelResponse: $searchResponse');
-          if (searchResponse.services?.status == 'success') {
-            return searchResponse.services?.data ?? [];
-          } else {
-            throw Exception('Search failed: ${searchResponse.services?.status}');
-          }
+          return searchResponse; // رجعنا الـ SearchModelResponse كامل
         } else {
-          throw Exception('Search failed: ${response.data['message'] ?? 'Unknown error'}');
+          throw Exception(
+              'Search failed: ${response.data['message'] ?? 'Unknown error'}');
         }
       } else {
-        throw Exception('Failed to fetch search results: Status code ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch search results: Status code ${response.statusCode}');
       }
     } catch (e) {
       log('Exception in fetchSearch: $e');
       if (e.toString().contains('FormatException')) {
-        throw Exception('Error fetching search results: Invalid response format from server');
+        throw Exception(
+            'Error fetching search results: Invalid response format from server');
       }
       throw Exception('Error fetching search results: $e');
     }
   }
+
   static Future<CartAddResponse> addItemToCart({
     required int userId,
     required int itemId,
