@@ -21,7 +21,8 @@ Widget homeTopBar(BuildContext context) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Please log in to view your profile')),
             );
-          } else {
+          }
+          else {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProfileScreen()),

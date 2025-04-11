@@ -9,6 +9,7 @@ import 'package:graduation_project/Profile_screen/data/repo/profile_repo.dart';
 import 'package:graduation_project/Theme/dialog_utils.dart';
 import 'package:graduation_project/Theme/dialogs.dart';
 import 'package:graduation_project/Theme/theme.dart';
+import 'package:graduation_project/Widgets/nav_bar_widget.dart';
 import 'package:graduation_project/auth/data/api/api_manager.dart';
 import 'package:graduation_project/auth/data/repository/auth_repository/data_source/auth_remote_data_source_impl.dart';
 import 'package:graduation_project/auth/data/repository/auth_repository/repository/auth_repository_impl.dart';
@@ -18,6 +19,7 @@ import 'package:graduation_project/auth/sign_up_screen/sign_up_screen.dart';
 import 'package:graduation_project/auth/sing_in_screen/cubit/login_screen_viewmodel.dart';
 import 'package:graduation_project/auth/sing_in_screen/cubit/login_state.dart';
 import 'package:graduation_project/auth/sing_in_screen/text_filed_login.dart';
+import 'package:graduation_project/functions/navigation.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/home_screen.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 import '../../main_screen/main_screen.dart';
@@ -68,13 +70,15 @@ class _SignInScreenState extends State<SignInScreen> {
           showAppDialog(context, state.errorMessage!);
         } else if (state is LoginSuccessState) {
           if (Navigator.canPop(context)) {
-            Navigator.pop(context);
+            pushAndRemoveUntil(context, const NavBarWidget());
           }
           // جيب الـ userId من الـ response
-          final userId = state.response.userId; // استخدمنا userId مباشرة من LoginResponse
+          final userId =
+              state.response.userId; // استخدمنا userId مباشرة من LoginResponse
           if (userId != null) {
             await AppLocalStorage.cacheData('user_id', userId);
-            await AppLocalStorage.cacheData('token', state.response.token); // احفظ الـ token كمان
+            await AppLocalStorage.cacheData(
+                'token', state.response.token); // احفظ الـ token كمان
 
             // اعمل Bloc لجلب الـ Profile
             final profileBloc = ProfileBloc(ProfileRepo());
@@ -82,11 +86,14 @@ class _SignInScreenState extends State<SignInScreen> {
             await for (final profileState in profileBloc.stream) {
               if (profileState is ProfileLoaded) {
                 final username = profileState.profile.data?.usersName;
-                await AppLocalStorage.cacheData(AppLocalStorage.userNameKey, username);
+                await AppLocalStorage.cacheData(
+                    AppLocalStorage.userNameKey, username);
                 break; // اخرج من اللوب لما الـ Profile يتحمل
               } else if (profileState is ProfileError) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to load profile: ${profileState.message}')),
+                  SnackBar(
+                      content: Text(
+                          'Failed to load profile: ${profileState.message}')),
                 );
                 break;
               }
@@ -115,7 +122,10 @@ class _SignInScreenState extends State<SignInScreen> {
           backgroundColor: Colors.transparent,
           title: Text(
             "Sign in",
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18.sp),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(fontSize: 18.sp),
           ),
         ),
         body: Form(
@@ -135,7 +145,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   Text(
                     "Email Address",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 14.sp),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontSize: 14.sp),
                   ),
                   SizedBox(height: 4.h),
                   TextFiledLogin(
@@ -161,7 +174,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   Text(
                     "Password",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 14.sp),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontSize: 14.sp),
                   ),
                   SizedBox(height: 4.h),
                   TextFiledLogin(
@@ -189,7 +205,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: Text(
                           "Forget Password?",
                           textAlign: TextAlign.end,
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 12.sp),
                         ),
                       ),
                     ],
@@ -210,7 +229,10 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Text(
                       "Sign in",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 13.sp),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(fontSize: 13.sp),
                     ),
                   ),
                   SizedBox(height: 30.h),
@@ -222,7 +244,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         padding: EdgeInsets.all(10.w),
                         child: Text(
                           "or sign in with",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 12.sp),
                         ),
                       ),
                     ],
@@ -270,4 +295,3 @@ AuthRepositoryContract injectAuthRepositoryContract() {
       remoteDataSource:
           AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
 }
-
