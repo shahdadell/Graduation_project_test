@@ -10,30 +10,19 @@ import 'package:graduation_project/local_data/shared_preference.dart';
 
 Widget homeTopBar(BuildContext context) {
   String greeting = getGreetingMessage();
-  final int? userId = AppLocalStorage.getData('user_id'); // جيب الـ userId من الـ storage
+  final int? userId =
+      AppLocalStorage.getData('user_id'); // جيب الـ userId من الـ storage
 
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
       InkWell(
-        onTap: () {
-          if (userId == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Please log in to view your profile')),
-            );
-          }
-          else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
-          }
-        },
+        onTap: () {},
         overlayColor: WidgetStatePropertyAll(MyTheme.transparent),
-        child: Icon(
-          Icons.person_2_sharp,
-          size: 26,
-          color: MyTheme.blackColor,
+        child: Image.asset(
+          AppImages.notification,
+          width: 24,
+          height: 24,
         ),
       ),
       Container(
@@ -74,7 +63,8 @@ Widget homeTopBar(BuildContext context) {
                       return const Text('Loading...');
                     }
                     // لو Guest (userId == null)، الاسم هيبقى فاضي
-                    String displayName = userId == null ? "" : (snapshot.data ?? "Guest");
+                    String displayName =
+                        userId == null ? "" : (snapshot.data ?? "Guest");
                     return SizedBox(
                       width: 142,
                       child: Text(
@@ -101,15 +91,6 @@ Widget homeTopBar(BuildContext context) {
               ),
             )
           ],
-        ),
-      ),
-      InkWell(
-        onTap: () {},
-        overlayColor: WidgetStatePropertyAll(MyTheme.transparent),
-        child: Image.asset(
-          AppImages.notification,
-          width: 24,
-          height: 24,
         ),
       ),
       InkWell(
@@ -185,7 +166,8 @@ Widget horizontalList(List list) {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Image.asset(
                       item.image!,
                       height: 140,
@@ -222,7 +204,8 @@ Widget horizontalList(List list) {
                       children: [
                         Text(
                           item.destination!,
-                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(
+                              14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                         const SizedBox(width: 4),
                         Container(
@@ -239,7 +222,8 @@ Widget horizontalList(List list) {
                         const SizedBox(width: 2),
                         Text(
                           item.rate!,
-                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(
+                              14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                       ],
                     ),
@@ -249,7 +233,9 @@ Widget horizontalList(List list) {
                           onTap: () {
                             if (userId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please log in to add to favorites')),
+                                const SnackBar(
+                                    content: Text(
+                                        'Please log in to add to favorites')),
                               );
                             } else {
                               // منطق إضافة للمفضلة هنا
@@ -267,7 +253,9 @@ Widget horizontalList(List list) {
                           onTap: () {
                             if (userId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please log in to add to cart')),
+                                const SnackBar(
+                                    content:
+                                        Text('Please log in to add to cart')),
                               );
                             } else {
                               // منطق إضافة للعربة هنا
@@ -345,7 +333,8 @@ Widget horizontalRestaurantList(List list) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(4)),
                 child: Image.asset(
                   item.icon!,
                   height: 140,
@@ -368,7 +357,8 @@ Widget horizontalRestaurantList(List list) {
                   const SizedBox(width: 2),
                   Text(
                     item.location!,
-                    style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
+                    style:
+                        textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
                   )
                 ],
               )
@@ -399,7 +389,8 @@ Widget recommendedListView(List list) {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Image.asset(
                       item.image!,
                       height: 142,
@@ -438,7 +429,8 @@ Widget recommendedListView(List list) {
                       children: [
                         Text(
                           item.destination!,
-                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(
+                              14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                         const SizedBox(width: 4),
                         Container(
@@ -455,7 +447,8 @@ Widget recommendedListView(List list) {
                         const SizedBox(width: 2),
                         Text(
                           item.rate!,
-                          style: textStyle(14, FontWeight.w500, MyTheme.iconGrayColor),
+                          style: textStyle(
+                              14, FontWeight.w500, MyTheme.iconGrayColor),
                         ),
                       ],
                     ),
@@ -465,7 +458,9 @@ Widget recommendedListView(List list) {
                           onTap: () {
                             if (userId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please log in to add to favorites')),
+                                const SnackBar(
+                                    content: Text(
+                                        'Please log in to add to favorites')),
                               );
                             } else {
                               // منطق إضافة للمفضلة هنا
@@ -483,7 +478,9 @@ Widget recommendedListView(List list) {
                           onTap: () {
                             if (userId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please log in to add to cart')),
+                                const SnackBar(
+                                    content:
+                                        Text('Please log in to add to cart')),
                               );
                             } else {
                               // منطق إضافة للعربة هنا

@@ -113,20 +113,8 @@ class CartScreen extends StatelessWidget {
       ),
       centerTitle: true,
       backgroundColor: MyTheme.orangeColor,
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [MyTheme.orangeColor, Colors.orange[400]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
     );
   }
-
   Widget _buildCartList(BuildContext context, Countprice? countPrice, List<Datacart> dataCart) {
     return Column(
       children: [

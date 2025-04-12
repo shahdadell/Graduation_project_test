@@ -86,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: MyTheme.orangeColor,
-                                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 8.h),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
@@ -97,12 +97,10 @@ class ProfileScreen extends StatelessWidget {
                                   style: textTheme.displayMedium,
                                 ),
                               ),
-                              SizedBox(height: 15.h), // مسافة بين الزرارين
+                              SizedBox(height: 15.h),
                               ElevatedButton(
                                 onPressed: () async {
-                                  // مسح البيانات من SharedPreferences
                                   await AppLocalStorage.clearData();
-                                  // الانتقال لصفحة MainScreen
                                   Navigator.pushReplacementNamed(
                                     context,
                                     MainScreen.routName,
@@ -110,7 +108,7 @@ class ProfileScreen extends StatelessWidget {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: MyTheme.orangeColor, // لون مختلف للتسجيل الخروج
-                                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 8.h),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
@@ -199,17 +197,17 @@ class ProfileScreen extends StatelessWidget {
       ),
       centerTitle: true,
       backgroundColor: MyTheme.orangeColor,
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [MyTheme.orangeColor, Colors.orange[400]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
+      // elevation: 4,
+      // shadowColor: Colors.black.withOpacity(0.3),
+      // flexibleSpace: Container(
+      //   decoration: BoxDecoration(
+      //     gradient: LinearGradient(
+      //       colors: [MyTheme.orangeColor, Colors.orange[400]!],
+      //       begin: Alignment.topLeft,
+      //       end: Alignment.bottomRight,
+      //     ),
+      //   ),
+      // ),
     );
   }
 

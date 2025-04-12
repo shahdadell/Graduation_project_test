@@ -9,7 +9,6 @@ import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
 import '../CategoriesGridWidget/CategoriesGridWidget.dart';
 import '../DiscountListWidget/DiscountListWidget.dart';
 import '../SearchFieldWidget/SearchFieldWidget.dart';
-import '../SearchFieldWidget/SearchScreen.dart';
 import '../SpecialOfferCarouselWidget/SpecialOfferCarouselWidget.dart';
 import '../TopSellingListWidget/TopSellingListWidget.dart';
 

@@ -25,17 +25,17 @@ class ItemsAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       backgroundColor: MyTheme.orangeColor,
       centerTitle: true,
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [MyTheme.orangeColor, Colors.orange[400]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
+      // elevation: 4,
+      // shadowColor: Colors.black.withOpacity(0.3),
+      // flexibleSpace: Container(
+      //   decoration: BoxDecoration(
+      //     gradient: LinearGradient(
+      //       colors: [MyTheme.orangeColor, Colors.orange[400]!],
+      //       begin: Alignment.topLeft,
+      //       end: Alignment.bottomRight,
+      //     ),
+      //   ),
+      // ),
     );
   }
 

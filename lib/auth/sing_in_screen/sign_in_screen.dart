@@ -187,7 +187,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         return "E-mail is required";
                       }
                       bool emailValid = RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                           .hasMatch(value);
                       if (!emailValid) {
                         return 'Please Enter Valid Email';
@@ -318,5 +318,5 @@ class _SignInScreenState extends State<SignInScreen> {
 AuthRepositoryContract injectAuthRepositoryContract() {
   return AuthRepositoryImpl(
       remoteDataSource:
-          AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
+      AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
 }

@@ -57,6 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: MyTheme.whiteColor,
       appBar: AppBar(
+       // backgroundColor: Colors.transparent,
         leading: InkWell(
           onTap: () => Navigator.pop(context),
           child: Padding(
@@ -70,17 +71,17 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         centerTitle: true,
         backgroundColor: MyTheme.orangeColor,
-        elevation: 4,
-        shadowColor: Colors.black.withOpacity(0.3),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [MyTheme.orangeColor, Colors.orange[400]!],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        // elevation: 4,
+        // shadowColor: Colors.black.withOpacity(0.3),
+        // flexibleSpace: Container(
+        //   decoration: BoxDecoration(
+        //     gradient: LinearGradient(
+        //       colors: [MyTheme.orangeColor, Colors.orange[400]!],
+        //       begin: Alignment.topLeft,
+        //       end: Alignment.bottomRight,
+        //     ),
+        //   ),
+        // ),
       ),
       body: Column(
         children: [
