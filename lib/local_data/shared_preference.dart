@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppLocalStorage {
@@ -28,6 +29,18 @@ class AppLocalStorage {
       return _preferences.getInt(key);
     }
     return _preferences.get(key);
+  }
+
+  static Future<void> cacheCart(Map<String, dynamic> cartData) async {
+    await cacheData('cached_cart', jsonEncode(cartData));
+  }
+
+  static Map<String, dynamic>? getCachedCart() {
+    final cartJson = getData('cached_cart');
+    if (cartJson != null) {
+      return jsonDecode(cartJson);
+    }
+    return null;
   }
 
   static Future<void> removeData(String key) async {
