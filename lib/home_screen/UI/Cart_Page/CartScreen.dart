@@ -417,40 +417,40 @@ class CartScreen extends StatelessWidget {
                                     }
                                   },
                                 ),
-                                IconButton(
-                                  icon: isLoading
-                                      ? SizedBox(
-                                    width: 24.w,
-                                    height: 24.w,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.redAccent,
-                                      strokeWidth: 2.w,
-                                    ),
-                                  )
-                                      : Icon(
-                                    Icons.delete,
-                                    size: 24.w,
-                                    color: Colors.redAccent,
-                                  ),
-                                  onPressed: isLoading
-                                      ? null
-                                      : () {
-                                    if (item.cartItemsid != null) {
-                                      context.read<CartBloc>().add(DeleteCartItemEvent(
-                                        userId: userId,
-                                        itemId: int.parse(item.cartItemsid!),
-                                      ));
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Cannot remove item: Missing item ID'),
-                                          backgroundColor: Colors.redAccent,
-                                          duration: Duration(seconds: 2),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
+                                // IconButton(
+                                //   icon: isLoading
+                                //       ? SizedBox(
+                                //     width: 24.w,
+                                //     height: 24.w,
+                                //     child: CircularProgressIndicator(
+                                //       color: Colors.redAccent,
+                                //       strokeWidth: 2.w,
+                                //     ),
+                                //   )
+                                //       : Icon(
+                                //     Icons.delete,
+                                //     size: 24.w,
+                                //     color: Colors.redAccent,
+                                //   ),
+                                //   onPressed: isLoading
+                                //       ? null
+                                //       : () {
+                                //     if (item.cartItemsid != null) {
+                                //       context.read<CartBloc>().add(DeleteCartItemEvent(
+                                //         userId: userId,
+                                //         itemId: int.parse(item.cartItemsid!),
+                                //       ));
+                                //     } else {
+                                //       ScaffoldMessenger.of(context).showSnackBar(
+                                //         const SnackBar(
+                                //           content: Text('Cannot remove item: Missing item ID'),
+                                //           backgroundColor: Colors.redAccent,
+                                //           duration: Duration(seconds: 2),
+                                //         ),
+                                //       );
+                                //     }
+                                //   },
+                                // ),
                               ],
                             ),
                           ],
