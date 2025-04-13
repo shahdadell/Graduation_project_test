@@ -65,7 +65,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         itemId: event.itemId,
       );
       emit(DeleteCartItemSuccessState(deleteResponse: response));
-      // بعد الحذف، نعيد جلب الـ Cart عشان نحدّث الـ UI
       add(FetchCartEvent(userId: event.userId));
     } catch (e) {
       emit(DeleteCartItemErrorState(message: e.toString()));

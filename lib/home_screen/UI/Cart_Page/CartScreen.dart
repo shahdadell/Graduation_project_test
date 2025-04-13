@@ -73,9 +73,8 @@ class CartScreen extends StatelessWidget {
           bloc.emit(FetchCartSuccessState(
             cartViewResponse: CartViewResponse.fromJson(cachedCart),
           ));
-        } else {
-          bloc.add(FetchCartEvent(userId: userId));
         }
+        bloc.add(FetchCartEvent(userId: userId));
         return bloc;
       },
       child: BlocListener<CartBloc, CartState>(
@@ -94,6 +93,8 @@ class CartScreen extends StatelessWidget {
                 duration: const Duration(seconds: 2),
               ),
             );
+            // طلب تحديث الـ Cart بعد الحذف
+            context.read<CartBloc>().add(FetchCartEvent(userId: userId));
           } else if (state is DeleteCartItemErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -118,6 +119,8 @@ class CartScreen extends StatelessWidget {
                 duration: const Duration(seconds: 2),
               ),
             );
+            // طلب تحديث الـ Cart بعد التعديل
+            context.read<CartBloc>().add(FetchCartEvent(userId: userId));
           } else if (state is AddToCartErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -146,8 +149,20 @@ class CartScreen extends StatelessWidget {
               builder: (context, state) {
                 if (state is FetchCartLoadingState) {
                   return Center(
-                    child:
-                    CircularProgressIndicator(color: MyTheme.orangeColor),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(color: MyTheme.orangeColor),
+                        SizedBox(height: 10.h),
+                        Text(
+                          'Loading your cart...',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 } else if (state is FetchCartSuccessState) {
                   final cart = state.cartViewResponse;
@@ -173,9 +188,7 @@ class CartScreen extends StatelessWidget {
                         SizedBox(height: 10.h),
                         ElevatedButton(
                           onPressed: () {
-                            context
-                                .read<CartBloc>()
-                                .add(FetchCartEvent(userId: userId));
+                            context.read<CartBloc>().add(FetchCartEvent(userId: userId));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: MyTheme.orangeColor,
@@ -197,7 +210,23 @@ class CartScreen extends StatelessWidget {
                     ),
                   );
                 }
-                return _buildEmptyCart(context);
+                // إذا كان الـ state مش معروف (أو في انتظار تحديث)، نعرض مؤشر تحميل بدل الـ UI الفاضية
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: MyTheme.orangeColor),
+                      SizedBox(height: 10.h),
+                      Text(
+                        'Loading your cart...',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
           ),
@@ -212,8 +241,7 @@ class CartScreen extends StatelessWidget {
         onTap: () => Navigator.pop(context),
         child: Padding(
           padding: EdgeInsets.all(12.w),
-          child:
-          Icon(Icons.arrow_back_ios, color: MyTheme.whiteColor, size: 24.w),
+          child: Icon(Icons.arrow_back_ios, color: MyTheme.whiteColor, size: 24.w),
         ),
       ),
       title: Text(
@@ -229,8 +257,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartList(BuildContext context, List<Datacart> dataCart,
-      int userId, CartViewResponse cart) {
+  Widget _buildCartList(BuildContext context, List<Datacart> dataCart, int userId, CartViewResponse cart) {
     List<Datacart> localCartItems = List.from(dataCart);
     double totalPrice = calculateTotalPrice(cart);
 
@@ -282,20 +309,16 @@ class CartScreen extends StatelessWidget {
                     listener: (context, state) {
                       if (state is DeleteCartItemSuccessState) {
                         setState(() {
-                          localCartItems
-                              .removeAt(index); // حذف العنصر من الـ UI يدويًا
+                          localCartItems.removeAt(index); // حذف العنصر من الـ UI يدويًا
                           totalPrice = calculateTotalPrice(cart); // تحديث السعر
                         });
-                        context
-                            .read<CartBloc>()
-                            .add(FetchCartEvent(userId: userId));
+                        context.read<CartBloc>().add(FetchCartEvent(userId: userId));
                       }
                     },
                     builder: (context, state) {
-                      bool isLoading = state is DeleteCartItemLoadingState;
+                      bool isLoading = state is DeleteCartItemLoadingState || state is AddToCartLoadingState;
                       return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 15.w, vertical: 5.h),
+                        margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
@@ -320,6 +343,8 @@ class CartScreen extends StatelessWidget {
                               width: 50.w,
                               height: 50.h,
                               fit: BoxFit.cover,
+                              memCacheHeight: (50.h).toInt(), // تحسين أداء الصور
+                              memCacheWidth: (50.w).toInt(),
                               placeholder: (context, url) => Center(
                                 child: CircularProgressIndicator(
                                   color: MyTheme.orangeColor,
@@ -373,31 +398,20 @@ class CartScreen extends StatelessWidget {
                                   ),
                                   onPressed: () {
                                     if (item.cartItemsid != null &&
-                                        (int.tryParse(
-                                            item.cartQuantity ?? '0') ??
-                                            0) >
-                                            1) {
-                                      context
-                                          .read<CartBloc>()
-                                          .add(DeleteCartItemEvent(
+                                        (int.tryParse(item.cartQuantity ?? '0') ?? 0) > 1) {
+                                      context.read<CartBloc>().add(DeleteCartItemEvent(
                                         userId: userId,
-                                        itemId:
-                                        int.parse(item.cartItemsid!),
+                                        itemId: int.parse(item.cartItemsid!),
                                       ));
                                     } else if (item.cartItemsid != null) {
-                                      context
-                                          .read<CartBloc>()
-                                          .add(DeleteCartItemEvent(
+                                      context.read<CartBloc>().add(DeleteCartItemEvent(
                                         userId: userId,
-                                        itemId:
-                                        int.parse(item.cartItemsid!),
+                                        itemId: int.parse(item.cartItemsid!),
                                       ));
                                     } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text(
-                                              'Cannot decrease quantity: Missing item ID'),
+                                          content: Text('Cannot decrease quantity: Missing item ID'),
                                           backgroundColor: Colors.redAccent,
                                           duration: const Duration(seconds: 2),
                                         ),
@@ -421,22 +435,17 @@ class CartScreen extends StatelessWidget {
                                   ),
                                   onPressed: () {
                                     if (item.cartItemsid != null) {
-                                      context
-                                          .read<CartBloc>()
-                                          .add(AddToCartEvent(
+                                      context.read<CartBloc>().add(AddToCartEvent(
                                         userId: userId,
-                                        itemId:
-                                        int.parse(item.cartItemsid!),
+                                        itemId: int.parse(item.cartItemsid!),
                                         quantity: 1,
                                       ));
                                     } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              'Cannot increase quantity: Missing item ID'),
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Cannot increase quantity: Missing item ID'),
                                           backgroundColor: Colors.redAccent,
-                                          duration: const Duration(seconds: 2),
+                                          duration: Duration(seconds: 2),
                                         ),
                                       );
                                     }
@@ -461,21 +470,15 @@ class CartScreen extends StatelessWidget {
                                       ? null
                                       : () {
                                     if (item.cartItemsid != null) {
-                                      context
-                                          .read<CartBloc>()
-                                          .add(DeleteCartItemEvent(
+                                      context.read<CartBloc>().add(DeleteCartItemEvent(
                                         userId: userId,
-                                        itemId: int.parse(
-                                            item.cartItemsid!),
+                                        itemId: int.parse(item.cartItemsid!),
                                       ));
                                     } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
-                                          content: Text(
-                                              'Cannot remove item: Missing item ID'),
-                                          backgroundColor:
-                                          Colors.redAccent,
+                                          content: Text('Cannot remove item: Missing item ID'),
+                                          backgroundColor: Colors.redAccent,
                                           duration: Duration(seconds: 2),
                                         ),
                                       );
@@ -600,3 +603,6 @@ class CartScreen extends StatelessWidget {
     return totalPrice;
   }
 }
+
+
+
