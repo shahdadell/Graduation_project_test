@@ -4,13 +4,12 @@ import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/home_screen/data/model/topSelling_model_response/TopSellinModelResponse.dart';
 
 void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
-  // طباعة الـ item كامل عشان نتأكد منه
   print("Item received: $item");
 
   if (item is! TopSellingData) {
     print("Error: Item is not of type TopSellingData - Type: ${item.runtimeType}");
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Error: Invalid item type'),
         backgroundColor: Colors.red,
         duration: Duration(seconds: 2),
