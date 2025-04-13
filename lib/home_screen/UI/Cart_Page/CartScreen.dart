@@ -410,10 +410,10 @@ class CartScreen extends StatelessWidget {
                                       ));
                                     } else {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                           content: Text('Cannot decrease quantity: Missing item ID'),
                                           backgroundColor: Colors.redAccent,
-                                          duration: const Duration(seconds: 2),
+                                          duration: Duration(seconds: 2),
                                         ),
                                       );
                                     }
@@ -603,6 +603,3 @@ class CartScreen extends StatelessWidget {
     return totalPrice;
   }
 }
-
-
-
