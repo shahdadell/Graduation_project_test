@@ -56,15 +56,15 @@ class SignUpScreenState extends State<SignUpScreen> {
           DialogUtils.hideLoading(context);
           DialogUtils.showMessage(context, state.response.message ?? '',
               posActionName: 'Ok', posAction: () {
-                if (viewmodel.emailController.text.isNotEmpty) {
-                  Navigator.of(context).pushReplacementNamed(
-                    OtpScreen.routName,
-                    arguments: viewmodel.emailController.text,
-                  );
-                } else {
-                  DialogUtils.showMessage(context, "Email is missing!");
-                }
-              });
+            if (viewmodel.emailController.text.isNotEmpty) {
+              Navigator.of(context).pushReplacementNamed(
+                OtpScreen.routName,
+                arguments: viewmodel.emailController.text,
+              );
+            } else {
+              DialogUtils.showMessage(context, "Email is missing!");
+            }
+          });
         }
       },
       child: Scaffold(
@@ -126,7 +126,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                         return "E-mail is required";
                       }
                       bool emailValid = RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                           .hasMatch(value);
                       if (!emailValid) {
                         return 'Please Enter Valid Email';
@@ -178,7 +178,10 @@ class SignUpScreenState extends State<SignUpScreen> {
                         return "Phone Number is required";
                       }
                       if (value.length < 11) {
-                        return "Phone Number Should Be At Least 11 Chars";
+                        return "Phone Number must be at least 11 digits";
+                      }
+                      if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                        return "Phone Number must contain only digits";
                       }
                       return null;
                     },
@@ -204,9 +207,21 @@ class SignUpScreenState extends State<SignUpScreen> {
                       if (value == null || value.isEmpty) {
                         return "Password is required";
                       }
-                      if (value.length < 6) {
-                        return "Password Should Be At Least 6 Chars";
+                      if (value.length < 8) {
+                        return "Password must be at least 8 characters long";
                       }
+                      // if (!RegExp(r'[a-z]').hasMatch(value)) {
+                      //   return "Password must contain at least one lowercase letter";
+                      // }
+                      // if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                      //   return "Password must contain at least one uppercase letter";
+                      // }
+                      // if (!RegExp(r'[0-9]').hasMatch(value)) {
+                      //   return "Password must contain at least one number";
+                      // }
+                      // if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                      //   return "Password must contain at least one special character";
+                      // }
                       return null;
                     },
                   ),
@@ -216,9 +231,11 @@ class SignUpScreenState extends State<SignUpScreen> {
                       viewmodel.SignUp(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 6.h), // تقليل الـ padding
+                      padding: EdgeInsets.symmetric(
+                          vertical: 6.h), // تقليل الـ padding
                       backgroundColor: MyTheme.orangeColor,
-                      minimumSize: Size(double.infinity, 35.h), // تقليل ارتفاع الزر
+                      minimumSize:
+                          Size(double.infinity, 35.h), // تقليل ارتفاع الزر
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r), // زوايا أنيقة
                       ),
@@ -280,5 +297,5 @@ class SignUpScreenState extends State<SignUpScreen> {
 AuthRepositoryContract injectAuthRepositoryContract() {
   return AuthRepositoryImpl(
       remoteDataSource:
-      AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
+          AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
 }

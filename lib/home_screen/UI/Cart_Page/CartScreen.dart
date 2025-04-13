@@ -5,21 +5,11 @@ import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/home_screen/bloc/Cart/cart_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Cart/cart_event.dart';
 import 'package:graduation_project/home_screen/bloc/Cart/cart_state.dart';
-import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_view_response/countprice.dart';
-import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_view_response/datacart.dart';
-import 'package:graduation_project/home_screen/data/repo/cart_repo.dart'; // أضفت الـ import ده
+import 'package:graduation_project/home_screen/data/repo/cart_repo.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 import 'package:lottie/lottie.dart';
-
-// Mock repository يرث من CartRepo
-class MockCartRepository implements CartRepo {
-  @override
-  Future<void> fetchCart(int userId) async {
-    // Mock implementation
-    await Future.delayed(Duration(seconds: 1));
-    // لو عايزة تضيفي mock data، ممكن تعملي return لبيانات وهمية هنا
-  }
-}
+import 'package:graduation_project/home_screen/data/model/Cart_model_response/CartViewResponse.dart';
+import '../../data/model/Cart_model_response/datacart.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -49,10 +39,34 @@ class CartScreen extends StatelessWidget {
     }
 
     return BlocProvider(
-      create: (context) => CartBloc(cartRepo: MockCartRepository())..add(FetchCartEvent(userId)),
+      create: (context) => CartBloc(cartRepo: CartRepo())..add(FetchCartEvent(userId: userId)),
       child: BlocListener<CartBloc, CartState>(
         listener: (context, state) {
-          // يمكنك إضافة منطق الـ listener هنا لو عايزة
+          if (state is DeleteCartItemSuccessState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Item quantity decreased'),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          } else if (state is DeleteCartItemErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to decrease quantity: ${state.message}'),
+                backgroundColor: Colors.redAccent,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
         },
         child: Scaffold(
           appBar: _buildAppBar(context),
@@ -73,17 +87,34 @@ class CartScreen extends StatelessWidget {
                 } else if (state is FetchCartSuccessState) {
                   final cart = state.cartViewResponse;
                   if (cart.status == 'success') {
-                    if (cart.restCafe != null && cart.restCafe!.datacart != null) {
-                      return _buildCartList(context, cart.restCafe!.countprice, cart.restCafe!.datacart!);
-                    } else if (cart.hotelTourist != null && cart.hotelTourist!.datacart != null) {
-                      return _buildCartList(context, cart.hotelTourist!.countprice, cart.hotelTourist!.datacart!.cast<Datacart>());
+                    final restCafeItems = cart.restCafe?.datacart ?? [];
+                    final hotelTouristItems = cart.hotelTourist?.datacart ?? [];
+                    final allItems = [...restCafeItems, ...hotelTouristItems];
+                    if (allItems.isNotEmpty) {
+                      return _buildCartList(context, allItems, userId);
                     }
                     return _buildEmptyCart(context);
-                  } else {
-                    return _buildEmptyCart(context);
                   }
-                } else if (state is FetchCartErrorState) {
                   return _buildEmptyCart(context);
+                } else if (state is FetchCartErrorState) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Error: ${state.message}',
+                          style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                        ),
+                        SizedBox(height: 10.h),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<CartBloc>().add(FetchCartEvent(userId: userId));
+                          },
+                          child: Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 return _buildEmptyCart(context);
               },
@@ -113,58 +144,54 @@ class CartScreen extends StatelessWidget {
       ),
       centerTitle: true,
       backgroundColor: MyTheme.orangeColor,
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [MyTheme.orangeColor, Colors.orange[400]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
     );
   }
 
-  Widget _buildCartList(BuildContext context, Countprice? countPrice, List<Datacart> dataCart) {
+  Widget _buildCartList(BuildContext context, List<Datacart> dataCart, int userId) {
+    // حساب الـ total price بناءً على الـ items في الـ Cart
+    double totalPrice = 0.0;
+    for (var item in dataCart) {
+      double price = double.tryParse(item.itemsPrice ?? '0.0') ?? 0.0;
+      int quantity = int.tryParse(item.cartQuantity ?? '0') ?? 0;
+      totalPrice += price * quantity;
+    }
+
     return Column(
       children: [
-        if (countPrice != null)
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 6.r,
-                  spreadRadius: 1.r,
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total: ${countPrice.totalprice ?? '0.00'} EGP',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  'Items: ${countPrice.totalcount ?? '0'}',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 6.r,
+                spreadRadius: 1.r,
+              ),
+            ],
           ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total: ${totalPrice.toStringAsFixed(2)} EGP',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                'Items: ${dataCart.length}',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -221,17 +248,24 @@ class CartScreen extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.delete, size: 24.w, color: Colors.redAccent),
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Delete is disabled for now'),
-                            backgroundColor: Colors.redAccent,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.r),
+                        if (item.cartId != null) {
+                          context.read<CartBloc>().add(DeleteCartItemEvent(
+                            userId: userId,
+                            itemId: item.cartId!,
+                          ));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Cannot decrease quantity: Missing item ID'),
+                              backgroundColor: Colors.redAccent,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              duration: const Duration(seconds: 2),
                             ),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                          );
+                        }
                       },
                     ),
                   ],

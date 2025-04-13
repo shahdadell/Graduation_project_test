@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/Theme/theme.dart';
+
 class FullDiscountCard extends StatelessWidget {
   final dynamic item;
 
@@ -9,17 +10,17 @@ class FullDiscountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(bottom: 10.h),
+      margin: EdgeInsets.only(bottom: 8.h), // قللنا الـ margin من 10.h لـ 8.h
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.r),
       ),
       elevation: 2,
       child: Padding(
-        padding: EdgeInsets.all(10.w),
+        padding: EdgeInsets.all(8.w), // قللنا الـ padding من 10.w لـ 8.w
         child: Row(
           children: [
             _buildImage(),
-            SizedBox(width: 15.w),
+            SizedBox(width: 12.w), // قللنا من 15.w لـ 12.w
             _buildDetails(),
           ],
         ),
@@ -28,21 +29,20 @@ class FullDiscountCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10.r),
-      child: Image.network(
-        item.itemsImage ?? '',
-        height: 80.h,
-        width: 80.w,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            height: 80.h,
-            width: 80.w,
-            color: Colors.grey[200],
-            child: Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
-          );
-        },
+    return AspectRatio(
+      aspectRatio: 1 / 1, // نسبة 1:1 عشان الصورة تكون مربعة
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.r),
+        child: Image.network(
+          item.itemsImage ?? '',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Colors.grey[200],
+              child: Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
+            );
+          },
+        ),
       ),
     );
   }
@@ -51,6 +51,7 @@ class FullDiscountCard extends StatelessWidget {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // عشان الـ Column تاخد أقل مساحة
         children: [
           Text(
             item.itemsName ?? 'Unknown',
@@ -62,7 +63,7 @@ class FullDiscountCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 5.h),
+          SizedBox(height: 4.h), // قللنا من 5.h لـ 4.h
           Text(
             "${item.itemsPrice ?? 'N/A'} EGP",
             style: TextStyle(
@@ -71,7 +72,7 @@ class FullDiscountCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 5.h),
+          SizedBox(height: 4.h),
           if (item.itemsDiscount != null && item.itemsDiscount != "0")
             Text(
               "${item.itemsDiscount}% OFF",
@@ -81,7 +82,7 @@ class FullDiscountCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          SizedBox(height: 5.h),
+          SizedBox(height: 4.h),
           Row(
             children: [
               Icon(Icons.star, size: 14.w, color: Colors.orangeAccent),

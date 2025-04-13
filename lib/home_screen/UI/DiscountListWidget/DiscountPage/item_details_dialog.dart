@@ -1,7 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/Theme/theme.dart';
+import 'package:graduation_project/home_screen/bloc/Cart/cart_bloc.dart';
+import 'package:graduation_project/home_screen/bloc/Cart/cart_event.dart';
+import 'package:graduation_project/home_screen/bloc/Cart/cart_state.dart';
+import 'package:graduation_project/local_data/shared_preference.dart';
 
 void showItemDetailsDialog(BuildContext context, dynamic item) {
   double originalPrice = (item.itemsPrice ?? 0.0).toDouble();
@@ -49,7 +54,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                   child: Stack(
                     children: [
                       SizedBox(
-                        height: 160.h, // ارتفاع أقل من 200.h
+                        height: 160.h,
                         width: double.infinity,
                         child: item.itemsImage != null &&
                                 item.itemsImage!.isNotEmpty
@@ -125,11 +130,12 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(12.w), // padding أقل
+                  padding: EdgeInsets.all(12.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+
                         item.itemsName ?? 'No Name',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -218,7 +224,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                               children: [
                                 Icon(
                                   Icons.restaurant,
-                                  size: 16.w, // أيقونة أصغر
+                                  size: 16.w,
                                   color: MyTheme.orangeColor,
                                 ),
                                 SizedBox(width: 6.w),
@@ -247,7 +253,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                 Text(
                                   '$rating / 5',
                                   style: TextStyle(
-                                    fontSize: 13.sp, // حجم أصغر
+                                    fontSize: 13.sp,
                                     color: Colors.grey[700],
                                   ),
                                 ),
@@ -258,14 +264,14 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                               children: [
                                 Icon(
                                   Icons.phone,
-                                  size: 16.w, // أيقونة أصغر
+                                  size: 16.w,
                                   color: Colors.green[700],
                                 ),
                                 SizedBox(width: 6.w),
                                 Text(
                                   phoneNumber,
                                   style: TextStyle(
-                                    fontSize: 13.sp, // حجم أصغر
+                                    fontSize: 13.sp,
                                     color: Colors.grey[700],
                                   ),
                                 ),
@@ -298,25 +304,75 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                               );
                             },
                           ),
-                          _buildActionButton(
-                            icon: Icons.add_shopping_cart,
-                            color: MyTheme.orangeColor,
-                            onTap: () {
-                              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Add to Cart Coming Soon!',
-                                    style: TextStyle(fontSize: 14.sp),
+                          BlocListener<CartBloc, CartState>(
+                            listener: (context, state) {
+                              if (state is AddToCartSuccessState) {
+                                ScaffoldMessenger.of(dialogContext)
+                                    .showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Added to Cart!',
+                                      style: TextStyle(fontSize: 14.sp),
+                                    ),
+                                    backgroundColor: Colors.green,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                    duration: const Duration(seconds: 1),
                                   ),
-                                  backgroundColor: Colors.black87,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.r),
+                                );
+                              } else if (state is AddToCartErrorState) {
+                                ScaffoldMessenger.of(dialogContext)
+                                    .showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Failed to add to cart: ${state.message}',
+                                      style: TextStyle(fontSize: 14.sp),
+                                    ),
+                                    backgroundColor: Colors.redAccent,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                    duration: const Duration(seconds: 2),
                                   ),
-                                  duration: const Duration(seconds: 1),
-                                ),
-                              );
+                                );
+                              }
                             },
+                            child: _buildActionButton(
+                              icon: Icons.add_shopping_cart,
+                              color: MyTheme.orangeColor,
+                              onTap: () {
+                                final userId =
+                                    AppLocalStorage.getData('user_id');
+                                if (userId != null) {
+                                  context.read<CartBloc>().add(AddToCartEvent(
+                                        userId: userId,
+                                        itemId: item
+                                            .itemsId, // لازم يكون عندك itemsId في الـ item
+                                        quantity: 1,
+                                      ));
+                                } else {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Please log in to add to cart',
+                                        style: TextStyle(fontSize: 14.sp),
+                                      ),
+                                      backgroundColor: Colors.redAccent,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
+                                      ),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -374,7 +430,7 @@ Widget _buildActionButton({
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      padding: EdgeInsets.all(8.w), // padding أصغر
+      padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.white,

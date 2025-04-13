@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/Home_Screen/UI/DiscountListWidget/DiscountCard.dart';
 import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_state.dart';
 import 'DiscountPage/AllDiscountsPage.dart';
-import 'DiscountCard.dart';
 
 class DiscountListWidget extends StatelessWidget {
   const DiscountListWidget({super.key});

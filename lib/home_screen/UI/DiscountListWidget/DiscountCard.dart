@@ -15,11 +15,11 @@ class DiscountCard extends StatelessWidget {
         if (kDebugMode) {
           print("Discount Card tapped: ${item.itemsName}");
         }
-        showItemDetailsDialog(context, item); // استدعاء الـ Dialog
+        showItemDetailsDialog(context, item);
       },
       child: Container(
         width: 140.w,
-        margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+        margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h), // قللنا الـ margin الرأسي
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
           gradient: LinearGradient(
@@ -37,6 +37,7 @@ class DiscountCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // عشان الـ Column تاخد أقل مساحة
           children: [
             _buildImage(),
             _buildDetails(),
@@ -49,20 +50,21 @@ class DiscountCard extends StatelessWidget {
   Widget _buildImage() {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-          child: Image.network(
-            item.itemsImage ?? '',
-            height: 80.h,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 80.h,
-                color: Colors.grey[200],
-                child: Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
-              );
-            },
+        AspectRatio(
+          aspectRatio: 16 / 9, // نسبة عرض لارتفاع مناسبة للصور
+          child: ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+            child: Image.network(
+              item.itemsImage ?? '',
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.grey[200],
+                  child: Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
+                );
+              },
+            ),
           ),
         ),
         if (item.itemsDiscount != null && item.itemsDiscount != 0)
@@ -91,7 +93,7 @@ class DiscountCard extends StatelessWidget {
 
   Widget _buildDetails() {
     return Padding(
-      padding: EdgeInsets.all(6.w),
+      padding: EdgeInsets.all(4.w), // قللنا الـ padding من 6.w لـ 4.w
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -105,7 +107,7 @@ class DiscountCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 3.h),
+          SizedBox(height: 2.h), // قللنا من 3.h لـ 2.h
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

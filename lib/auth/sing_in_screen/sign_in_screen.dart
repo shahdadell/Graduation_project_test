@@ -9,6 +9,7 @@ import 'package:graduation_project/Profile_screen/data/repo/profile_repo.dart';
 import 'package:graduation_project/Theme/dialog_utils.dart';
 import 'package:graduation_project/Theme/dialogs.dart';
 import 'package:graduation_project/Theme/theme.dart';
+import 'package:graduation_project/Widgets/nav_bar_widget.dart';
 import 'package:graduation_project/auth/data/api/api_manager.dart';
 import 'package:graduation_project/auth/data/repository/auth_repository/data_source/auth_remote_data_source_impl.dart';
 import 'package:graduation_project/auth/data/repository/auth_repository/repository/auth_repository_impl.dart';
@@ -18,6 +19,7 @@ import 'package:graduation_project/auth/sign_up_screen/sign_up_screen.dart';
 import 'package:graduation_project/auth/sing_in_screen/cubit/login_screen_viewmodel.dart';
 import 'package:graduation_project/auth/sing_in_screen/cubit/login_state.dart';
 import 'package:graduation_project/auth/sing_in_screen/text_filed_login.dart';
+import 'package:graduation_project/functions/navigation.dart'; // استوردت ملف الـ navigation
 import 'package:graduation_project/home_screen/UI/Home_Page/home_screen.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 import '../../main_screen/main_screen.dart';
@@ -38,12 +40,32 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
+    checkToken();
   }
 
   void checkToken() async {
     final token = AppLocalStorage.getData('token');
     if (token != null && token.isNotEmpty) {
-      Navigator.of(context).pushReplacementNamed(HomeScreen.routName);
+      showLoadingDialog(context); // أضفت loading dialog
+      final userId = AppLocalStorage.getData('user_id');
+      if (userId != null) {
+        final profileBloc = ProfileBloc(ProfileRepo());
+        profileBloc.add(FetchProfileEvent(userId.toString()));
+        await for (final profileState in profileBloc.stream) {
+          if (profileState is ProfileLoaded) {
+            final username = profileState.profile.data?.usersName;
+            await AppLocalStorage.cacheData(AppLocalStorage.userNameKey, username);
+            break;
+          } else if (profileState is ProfileError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to load profile: ${profileState.message}')),
+            );
+            break;
+          }
+        }
+      }
+      Navigator.of(context).pop(); // إغلاق الـ loading dialog
+      pushWithReplacement(context, const NavBarWidget()); // استخدمت pushWithReplacement
     }
   }
 
@@ -68,17 +90,20 @@ class _SignInScreenState extends State<SignInScreen> {
           showAppDialog(context, state.errorMessage!);
         } else if (state is LoginSuccessState) {
           if (Navigator.canPop(context)) {
-            Navigator.pop(context);
+            Navigator.pop(context); // إغلاق الـ loading dialog
           }
+
           // جيب الـ userId من الـ response
-          final userId = state.response.userId; // استخدمنا userId مباشرة من LoginResponse
+          final userId = state.response.userId;
           if (userId != null) {
             await AppLocalStorage.cacheData('user_id', userId);
-            await AppLocalStorage.cacheData('token', state.response.token); // احفظ الـ token كمان
+            await AppLocalStorage.cacheData('token', state.response.token);
 
             // اعمل Bloc لجلب الـ Profile
             final profileBloc = ProfileBloc(ProfileRepo());
             profileBloc.add(FetchProfileEvent(userId.toString()));
+
+            // استنى الـ Profile يتحمل قبل التنقل
             await for (final profileState in profileBloc.stream) {
               if (profileState is ProfileLoaded) {
                 final username = profileState.profile.data?.usersName;
@@ -86,21 +111,28 @@ class _SignInScreenState extends State<SignInScreen> {
                 break; // اخرج من اللوب لما الـ Profile يتحمل
               } else if (profileState is ProfileError) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to load profile: ${profileState.message}')),
+                  SnackBar(
+                    content: Text('Failed to load profile: ${profileState.message}'),
+                  ),
                 );
                 break;
               }
             }
-          }
 
-          Navigator.of(context).pushReplacementNamed(HomeScreen.routName);
+            // بعد ما الـ username يتخزن، انقل للـ NavBarWidget
+            pushAndRemoveUntil(context, const NavBarWidget()); // استخدمت pushAndRemoveUntil
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('User ID not found')),
+            );
+          }
         }
       },
       child: Scaffold(
         appBar: AppBar(
           leading: InkWell(
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(MainScreen.routName);
+              pushWithReplacement(context, const MainScreen()); // استخدمت pushWithReplacement
             },
             child: Padding(
               padding: EdgeInsets.all(10.w),
@@ -115,7 +147,10 @@ class _SignInScreenState extends State<SignInScreen> {
           backgroundColor: Colors.transparent,
           title: Text(
             "Sign in",
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18.sp),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(fontSize: 18.sp),
           ),
         ),
         body: Form(
@@ -135,7 +170,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   Text(
                     "Email Address",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 14.sp),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontSize: 14.sp),
                   ),
                   SizedBox(height: 4.h),
                   TextFiledLogin(
@@ -149,7 +187,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         return "E-mail is required";
                       }
                       bool emailValid = RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                           .hasMatch(value);
                       if (!emailValid) {
                         return 'Please Enter Valid Email';
@@ -161,7 +199,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   Text(
                     "Password",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 14.sp),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontSize: 14.sp),
                   ),
                   SizedBox(height: 4.h),
                   TextFiledLogin(
@@ -189,7 +230,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: Text(
                           "Forget Password?",
                           textAlign: TextAlign.end,
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 12.sp),
                         ),
                       ),
                     ],
@@ -210,7 +254,10 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Text(
                       "Sign in",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 13.sp),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(fontSize: 13.sp),
                     ),
                   ),
                   SizedBox(height: 30.h),
@@ -222,7 +269,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         padding: EdgeInsets.all(10.w),
                         child: Text(
                           "or sign in with",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 12.sp),
                         ),
                       ),
                     ],
@@ -268,6 +318,5 @@ class _SignInScreenState extends State<SignInScreen> {
 AuthRepositoryContract injectAuthRepositoryContract() {
   return AuthRepositoryImpl(
       remoteDataSource:
-          AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
+      AuthRemoteDataSourceImpl(apiManager: ApiManager.getInstance()));
 }
-

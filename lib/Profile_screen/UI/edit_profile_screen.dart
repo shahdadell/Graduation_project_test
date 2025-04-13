@@ -24,7 +24,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
-  late TextEditingController _passwordController;
 
   @override
   void initState() {
@@ -32,7 +31,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(text: widget.profile?.usersName ?? '');
     _emailController = TextEditingController(text: widget.profile?.usersEmail ?? '');
     _phoneController = TextEditingController(text: widget.profile?.usersPhone ?? '');
-    _passwordController = TextEditingController();
   }
 
   @override
@@ -40,7 +38,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -121,9 +118,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 _nameController.text,
                                 _emailController.text,
                                 _phoneController.text,
-                                password: _passwordController.text.isNotEmpty
-                                    ? _passwordController.text
-                                    : null,
                               ),
                             );
                           }
@@ -167,17 +161,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       centerTitle: true,
       backgroundColor: MyTheme.orangeColor,
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [MyTheme.orangeColor, Colors.orange[400]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
+      // elevation: 4,
+      // shadowColor: Colors.black.withOpacity(0.3),
+      // flexibleSpace: Container(
+      //   decoration: BoxDecoration(
+      //     gradient: LinearGradient(
+      //       colors: [MyTheme.orangeColor, Colors.orange[400]!],
+      //       begin: Alignment.topLeft,
+      //       end: Alignment.bottomRight,
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -202,8 +196,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           buildEditableField(context, "Name", _nameController, Icons.person, isEditing: true),
           buildEditableField(context, "Email", _emailController, Icons.email, isEditing: true),
           buildEditableField(context, "Phone", _phoneController, Icons.phone, isEditing: true),
-          buildEditableField(context, "Password", _passwordController, Icons.lock,
-              isEditing: true, obscureText: true),
         ],
       ),
     );
