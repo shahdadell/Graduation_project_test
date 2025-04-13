@@ -1,15 +1,15 @@
 class Datacart {
-  final int? cartId;
-  final String? cartUsersid;
-  final String? cartItemsid;
-  final String? cartOrders;
-  final String? cartQuantity;
-  final String? itemsName;
-  final String? itemsPrice;
-  final String? itemsImage;
-  final String? itemsCat;
-  final String? itemsDiscount;
-  final String? totalPrice;
+  String? cartId;
+  String? cartUsersid;
+  String? cartItemsid; // تأكدي إن الحقل ده موجود
+  String? cartOrders;
+  String? cartQuantity;
+  String? itemsName;
+  String? itemsPrice;
+  String? itemsImage;
+  String? itemsCat;
+  String? itemsDiscount;
+  String? totalPrice;
 
   Datacart({
     this.cartId,
@@ -25,35 +25,33 @@ class Datacart {
     this.totalPrice,
   });
 
-  factory Datacart.fromJson(Map<String, dynamic> json) {
-    return Datacart(
-      cartId: json['cart_id'] != null ? int.tryParse(json['cart_id'].toString()) : null,
-      cartUsersid: json['cart_usersid'] as String?,
-      cartItemsid: json['cart_itemsid'] as String?,
-      cartOrders: json['cart_orders'] as String?,
-      cartQuantity: json['cart_quantity'] as String?,
-      itemsName: json['items_name'] as String?,
-      itemsPrice: json['items_price'] as String?,
-      itemsImage: json['items_image'] as String?,
-      itemsCat: json['items_cat'] as String?,
-      itemsDiscount: json['items_discount'] as String?,
-      totalPrice: json['total_price'] as String?,
-    );
+  Datacart.fromJson(Map<String, dynamic> json) {
+    cartId = json['cart_id']?.toString();
+    cartUsersid = json['cart_usersid']?.toString();
+    cartItemsid = json['cart_itemsid']?.toString(); // التأكد من الحقل ده
+    cartOrders = json['cart_orders']?.toString();
+    cartQuantity = json['cart_quantity']?.toString();
+    itemsName = json['items_name']?.toString();
+    itemsPrice = json['items_price']?.toString();
+    itemsImage = json['items_image']?.toString();
+    itemsCat = json['items_cat']?.toString();
+    itemsDiscount = json['items_discount']?.toString();
+    totalPrice = json['total_price']?.toString();
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'cart_id': cartId,
-      'cart_usersid': cartUsersid,
-      'cart_itemsid': cartItemsid,
-      'cart_orders': cartOrders,
-      'cart_quantity': cartQuantity,
-      'items_name': itemsName,
-      'items_price': itemsPrice,
-      'items_image': itemsImage,
-      'items_cat': itemsCat,
-      'items_discount': itemsDiscount,
-      'total_price': totalPrice,
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['cart_id'] = cartId;
+    data['cart_usersid'] = cartUsersid;
+    data['cart_itemsid'] = cartItemsid;
+    data['cart_orders'] = cartOrders;
+    data['cart_quantity'] = cartQuantity;
+    data['items_name'] = itemsName;
+    data['items_price'] = itemsPrice;
+    data['items_image'] = itemsImage;
+    data['items_cat'] = itemsCat;
+    data['items_discount'] = itemsDiscount;
+    data['total_price'] = totalPrice;
+    return data;
   }
 }
