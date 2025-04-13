@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graduation_project/API_Services/dio_provider.dart';
 import 'package:graduation_project/API_Services/endpoints.dart';
-import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_add_response.dart';
 import 'package:graduation_project/home_screen/data/model/home_model_response/Categorydatum.dart';
 import 'package:graduation_project/home_screen/data/model/home_model_response/items_model.dart';
 import 'package:graduation_project/home_screen/data/model/item_model_response/Itemdatum.dart';
@@ -14,6 +13,7 @@ import 'package:graduation_project/home_screen/data/model/topSelling_model_respo
 import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart'
     as search; // Alias واحد فقط
 import '../../../local_data/shared_preference.dart';
+import '../model/Cart_model_response/CartAddResponse.dart';
 
 class HomeRepo {
   static Future<List<Categorydatum>> fetchCategories() async {

@@ -1,6 +1,7 @@
-import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_add_response.dart';
-import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_count_response.dart';
-import 'package:graduation_project/home_screen/data/model/Cart_model_response/cart_view_response/cart_view_response.dart';
+import 'package:graduation_project/home_screen/data/model/Cart_model_response/CartAddResponse.dart';
+import 'package:graduation_project/home_screen/data/model/Cart_model_response/CartGetCountTimesResponse.dart';
+import 'package:graduation_project/home_screen/data/model/Cart_model_response/CartViewResponse.dart';
+import 'package:graduation_project/home_screen/data/model/Cart_model_response/CartDeleteResponse.dart';
 
 class CartState {}
 
@@ -23,7 +24,7 @@ class AddToCartErrorState extends CartState {
 class GetCartItemCountLoadingState extends CartState {}
 
 class GetCartItemCountSuccessState extends CartState {
-  final CartCountResponse countResponse;
+  final CartGetCountTimesResponse countResponse;
   final int? itemId;
 
   GetCartItemCountSuccessState({required this.countResponse, this.itemId});
@@ -47,4 +48,18 @@ class FetchCartErrorState extends CartState {
   final String message;
 
   FetchCartErrorState({required this.message});
+}
+
+class DeleteCartItemLoadingState extends CartState {}
+
+class DeleteCartItemSuccessState extends CartState {
+  final CartDeleteResponse deleteResponse;
+
+  DeleteCartItemSuccessState({required this.deleteResponse});
+}
+
+class DeleteCartItemErrorState extends CartState {
+  final String message;
+
+  DeleteCartItemErrorState({required this.message});
 }

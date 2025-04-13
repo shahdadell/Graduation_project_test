@@ -25,7 +25,7 @@ class AppLocalStorage {
 
   static dynamic getData(String key) {
     if (key == 'user_id') {
-      return _preferences.getInt(key); // رجع الـ user_id كـ int
+      return _preferences.getInt(key);
     }
     return _preferences.get(key);
   }
