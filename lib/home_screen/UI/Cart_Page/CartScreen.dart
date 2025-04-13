@@ -146,7 +146,8 @@ class CartScreen extends StatelessWidget {
               builder: (context, state) {
                 if (state is FetchCartLoadingState) {
                   return Center(
-                    child: CircularProgressIndicator(color: MyTheme.orangeColor),
+                    child:
+                    CircularProgressIndicator(color: MyTheme.orangeColor),
                   );
                 } else if (state is FetchCartSuccessState) {
                   final cart = state.cartViewResponse;
@@ -172,7 +173,9 @@ class CartScreen extends StatelessWidget {
                         SizedBox(height: 10.h),
                         ElevatedButton(
                           onPressed: () {
-                            context.read<CartBloc>().add(FetchCartEvent(userId: userId));
+                            context
+                                .read<CartBloc>()
+                                .add(FetchCartEvent(userId: userId));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: MyTheme.orangeColor,
@@ -209,7 +212,8 @@ class CartScreen extends StatelessWidget {
         onTap: () => Navigator.pop(context),
         child: Padding(
           padding: EdgeInsets.all(12.w),
-          child: Icon(Icons.arrow_back_ios, color: MyTheme.whiteColor, size: 24.w),
+          child:
+          Icon(Icons.arrow_back_ios, color: MyTheme.whiteColor, size: 24.w),
         ),
       ),
       title: Text(
@@ -225,7 +229,8 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartList(BuildContext context, List<Datacart> dataCart, int userId, CartViewResponse cart) {
+  Widget _buildCartList(BuildContext context, List<Datacart> dataCart,
+      int userId, CartViewResponse cart) {
     List<Datacart> localCartItems = List.from(dataCart);
     double totalPrice = calculateTotalPrice(cart);
 
@@ -277,16 +282,20 @@ class CartScreen extends StatelessWidget {
                     listener: (context, state) {
                       if (state is DeleteCartItemSuccessState) {
                         setState(() {
-                          localCartItems.removeAt(index); // حذف العنصر من الـ UI يدويًا
+                          localCartItems
+                              .removeAt(index); // حذف العنصر من الـ UI يدويًا
                           totalPrice = calculateTotalPrice(cart); // تحديث السعر
                         });
-                        context.read<CartBloc>().add(FetchCartEvent(userId: userId));
+                        context
+                            .read<CartBloc>()
+                            .add(FetchCartEvent(userId: userId));
                       }
                     },
                     builder: (context, state) {
                       bool isLoading = state is DeleteCartItemLoadingState;
                       return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 15.w, vertical: 5.h),
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
@@ -364,20 +373,31 @@ class CartScreen extends StatelessWidget {
                                   ),
                                   onPressed: () {
                                     if (item.cartItemsid != null &&
-                                        (int.tryParse(item.cartQuantity ?? '0') ?? 0) > 1) {
-                                      context.read<CartBloc>().add(DeleteCartItemEvent(
+                                        (int.tryParse(
+                                            item.cartQuantity ?? '0') ??
+                                            0) >
+                                            1) {
+                                      context
+                                          .read<CartBloc>()
+                                          .add(DeleteCartItemEvent(
                                         userId: userId,
-                                        itemId: int.parse(item.cartItemsid!),
+                                        itemId:
+                                        int.parse(item.cartItemsid!),
                                       ));
                                     } else if (item.cartItemsid != null) {
-                                      context.read<CartBloc>().add(DeleteCartItemEvent(
+                                      context
+                                          .read<CartBloc>()
+                                          .add(DeleteCartItemEvent(
                                         userId: userId,
-                                        itemId: int.parse(item.cartItemsid!),
+                                        itemId:
+                                        int.parse(item.cartItemsid!),
                                       ));
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
-                                          content: Text('Cannot decrease quantity: Missing item ID'),
+                                          content: Text(
+                                              'Cannot decrease quantity: Missing item ID'),
                                           backgroundColor: Colors.redAccent,
                                           duration: const Duration(seconds: 2),
                                         ),
@@ -401,56 +421,67 @@ class CartScreen extends StatelessWidget {
                                   ),
                                   onPressed: () {
                                     if (item.cartItemsid != null) {
-                                      context.read<CartBloc>().add(AddToCartEvent(
+                                      context
+                                          .read<CartBloc>()
+                                          .add(AddToCartEvent(
                                         userId: userId,
-                                        itemId: int.parse(item.cartItemsid!),
+                                        itemId:
+                                        int.parse(item.cartItemsid!),
                                         quantity: 1,
                                       ));
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Cannot increase quantity: Missing item ID'),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Cannot increase quantity: Missing item ID'),
                                           backgroundColor: Colors.redAccent,
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                IconButton(
+                                  icon: isLoading
+                                      ? SizedBox(
+                                    width: 24.w,
+                                    height: 24.w,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.redAccent,
+                                      strokeWidth: 2.w,
+                                    ),
+                                  )
+                                      : Icon(
+                                    Icons.delete,
+                                    size: 24.w,
+                                    color: Colors.redAccent,
+                                  ),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () {
+                                    if (item.cartItemsid != null) {
+                                      context
+                                          .read<CartBloc>()
+                                          .add(DeleteCartItemEvent(
+                                        userId: userId,
+                                        itemId: int.parse(
+                                            item.cartItemsid!),
+                                      ));
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Cannot remove item: Missing item ID'),
+                                          backgroundColor:
+                                          Colors.redAccent,
                                           duration: Duration(seconds: 2),
                                         ),
                                       );
                                     }
                                   },
                                 ),
-                                // IconButton(
-                                //   icon: isLoading
-                                //       ? SizedBox(
-                                //     width: 24.w,
-                                //     height: 24.w,
-                                //     child: CircularProgressIndicator(
-                                //       color: Colors.redAccent,
-                                //       strokeWidth: 2.w,
-                                //     ),
-                                //   )
-                                //       : Icon(
-                                //     Icons.delete,
-                                //     size: 24.w,
-                                //     color: Colors.redAccent,
-                                //   ),
-                                //   onPressed: isLoading
-                                //       ? null
-                                //       : () {
-                                //     if (item.cartItemsid != null) {
-                                //       context.read<CartBloc>().add(DeleteCartItemEvent(
-                                //         userId: userId,
-                                //         itemId: int.parse(item.cartItemsid!),
-                                //       ));
-                                //     } else {
-                                //       ScaffoldMessenger.of(context).showSnackBar(
-                                //         const SnackBar(
-                                //           content: Text('Cannot remove item: Missing item ID'),
-                                //           backgroundColor: Colors.redAccent,
-                                //           duration: Duration(seconds: 2),
-                                //         ),
-                                //       );
-                                //     }
-                                //   },
-                                // ),
                               ],
                             ),
                           ],
@@ -539,7 +570,6 @@ class CartScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
-
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
             ),
             child: Text(
@@ -566,6 +596,7 @@ class CartScreen extends StatelessWidget {
       int quantity = int.tryParse(item.cartQuantity ?? '0') ?? 0;
       totalPrice += price * quantity;
     }
+
     return totalPrice;
   }
 }
