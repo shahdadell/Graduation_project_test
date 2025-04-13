@@ -30,32 +30,25 @@ class DioProvider {
         print('Response Headers: ${response.headers}');
         print('Raw Response: ${response.data}');
 
-        // التحقق من إن الاستجابة مش فارغة
         if (response.data == null || response.data.toString().trim().isEmpty) {
           print('Error: Response is empty or null');
           throw Exception('Response is empty or null');
         }
 
-        // تنظيف الاستجابة
         String responseData = response.data.toString().trim();
         print('Trimmed Response: $responseData');
 
-        // التعامل مع الـ Response المكرر
         if (responseData.contains('}{')) {
-          // اقسم الـ Response عند الـ `}{`
           final parts = responseData.split('}{');
-          // خد الجزء التاني (اللي فيه الـ data) وأضف `{` في البداية و `}` في النهاية
           responseData = '{${parts[1]}';
           print('Fixed Response: $responseData');
         } else {
-          // التحقق من إن الاستجابة كاملة (تحتوي على { و })
           if (!responseData.startsWith('{') || !responseData.endsWith('}')) {
             print('Error: Incomplete JSON response');
             throw Exception('Incomplete JSON response: $responseData');
           }
         }
 
-        // محاولة تحليل الاستجابة كـ JSON
         try {
           response.data = jsonDecode(responseData);
           print('Cleaned Response (Parsed JSON): ${response.data}');
