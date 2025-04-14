@@ -6,6 +6,7 @@ import 'package:graduation_project/home_screen/data/model/topSelling_model_respo
 void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
   print("Item received: $item");
 
+
   if (item is! TopSellingData) {
     print("Error: Item is not of type TopSellingData - Type: ${item.runtimeType}");
     ScaffoldMessenger.of(context).showSnackBar(
@@ -18,7 +19,6 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
     return;
   }
 
-  // تحويل البيانات
   double originalPrice = double.tryParse(item.itemsPrice ?? '0') ?? 0.0;
   double discount = (double.tryParse(item.itemsDiscount ?? '0') ?? 0.0) / 100;
   double discountedPrice = originalPrice * (1 - discount);
@@ -427,7 +427,7 @@ Widget _buildActionButton({
           BoxShadow(
             color: color.withOpacity(0.3),
             blurRadius: 4.r,
-            spreadRadius: 1.r,
+            //spreadRadius: 1.r,
           ),
         ],
       ),
