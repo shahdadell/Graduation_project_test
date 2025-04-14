@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduation_project/Profile_screen/UI/profile_screen.dart';
 import 'package:graduation_project/Theme/theme.dart';
@@ -7,11 +10,15 @@ import 'package:graduation_project/home_screen/UI/Cart_Page/CartScreen.dart';
 import 'package:graduation_project/Theme/style.dart';
 import 'package:graduation_project/home_screen/UI/Home_Page/homevariables.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
+import '../../bloc/Cart/cart_bloc.dart';
+import '../../bloc/Cart/cart_event.dart';
+import '../../bloc/Cart/cart_state.dart';
+import '../../data/repo/cart_repo.dart';
+
 
 Widget homeTopBar(BuildContext context) {
   String greeting = getGreetingMessage();
-  final int? userId =
-      AppLocalStorage.getData('user_id'); // جيب الـ userId من الـ storage
+  final int? userId = AppLocalStorage.getData('user_id');
 
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -19,10 +26,10 @@ Widget homeTopBar(BuildContext context) {
       InkWell(
         onTap: () {},
         overlayColor: WidgetStatePropertyAll(MyTheme.transparent),
-        child: Image.asset(
-          AppImages.notification,
-          width: 24,
-          height: 24,
+        child: Icon(
+          IconlyLight.notification,
+          size: 24,
+          color: MyTheme.mauveColor,
         ),
       ),
       Container(
@@ -62,9 +69,8 @@ Widget homeTopBar(BuildContext context) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Text('Loading...');
                     }
-                    // لو Guest (userId == null)، الاسم هيبقى فاضي
                     String displayName =
-                        userId == null ? "" : (snapshot.data ?? "Guest");
+                    userId == null ? "" : (snapshot.data ?? "Guest");
                     return SizedBox(
                       width: 142,
                       child: Text(
@@ -93,24 +99,74 @@ Widget homeTopBar(BuildContext context) {
           ],
         ),
       ),
-      InkWell(
-        onTap: () {
-          if (userId == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Please log in to view your cart')),
+      BlocProvider(
+        create: (context) => CartBloc(cartRepo: CartRepo())
+          ..add(FetchCartEvent(userId: userId ?? 0)),
+        child: BlocBuilder<CartBloc, CartState>(
+          builder: (context, state) {
+            int itemsCount = 0;
+            if (state is FetchCartSuccessState && userId != null) {
+              final cart = state.cartViewResponse;
+              final restCafeItems = cart.restCafe?.datacart ?? [];
+              final hotelTouristItems = cart.hotelTourist?.datacart ?? [];
+              itemsCount = [...restCafeItems, ...hotelTouristItems].length;
+            }
+            return InkWell(
+              onTap: () {
+                if (userId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please log in to view your cart')),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CartScreen()),
+                  );
+                }
+              },
+              overlayColor: WidgetStatePropertyAll(MyTheme.transparent),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Icon(
+                    IconlyLight.bag,
+                    size: 24,
+                    color: MyTheme.mauveColor,
+                  ),
+                  if (itemsCount > 0)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 14.w,
+                        height: 14.w,
+                        decoration: BoxDecoration(
+                          color: MyTheme.orangeColor,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: MyTheme.orangeColor.withOpacity(0.4),
+                              blurRadius: 4.r,
+                              spreadRadius: 1.r,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$itemsCount',
+                            style: TextStyle(
+                              color: MyTheme.whiteColor,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CartScreen()),
-            );
-          }
-        },
-        overlayColor: WidgetStatePropertyAll(MyTheme.transparent),
-        child: Image.asset(
-          AppImages.cart,
-          width: 24,
-          height: 24,
+          },
         ),
       ),
     ],
