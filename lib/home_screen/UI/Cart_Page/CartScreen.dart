@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/Home_Screen/UI/home_page/home_screen.dart';
 import 'package:graduation_project/Theme/theme.dart';
 import 'package:graduation_project/home_screen/bloc/Cart/cart_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Cart/cart_event.dart';
@@ -14,7 +15,6 @@ import '../../data/model/Cart_model_response/datacart.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
-
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -58,7 +58,8 @@ class _CartScreenState extends State<CartScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
                     elevation: 5,
                     shadowColor: MyTheme.orangeColor.withOpacity(0.4),
                   ),
@@ -98,7 +99,8 @@ class _CartScreenState extends State<CartScreen> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle_rounded, color: MyTheme.whiteColor, size: 16.w),
+                    Icon(Icons.check_circle_rounded,
+                        color: MyTheme.whiteColor, size: 16.w),
                     SizedBox(width: 8.w),
                     Text('Item removed from cart'),
                   ],
@@ -117,7 +119,8 @@ class _CartScreenState extends State<CartScreen> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.error_rounded, color: MyTheme.whiteColor, size: 16.w),
+                    Icon(Icons.error_rounded,
+                        color: MyTheme.whiteColor, size: 16.w),
                     SizedBox(width: 8.w),
                     Text('Failed to remove item: ${state.message}'),
                   ],
@@ -135,7 +138,8 @@ class _CartScreenState extends State<CartScreen> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle_rounded, color: MyTheme.whiteColor, size: 16.w),
+                    Icon(Icons.check_circle_rounded,
+                        color: MyTheme.whiteColor, size: 16.w),
                     SizedBox(width: 8.w),
                     Text('Quantity updated!'),
                   ],
@@ -154,7 +158,8 @@ class _CartScreenState extends State<CartScreen> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.error_rounded, color: MyTheme.whiteColor, size: 16.w),
+                    Icon(Icons.error_rounded,
+                        color: MyTheme.whiteColor, size: 16.w),
                     SizedBox(width: 8.w),
                     Text('Failed to update quantity: ${state.message}'),
                   ],
@@ -187,7 +192,8 @@ class _CartScreenState extends State<CartScreen> {
                         SizedBox(height: 15.h),
                         Text(
                           'Loading your cart...',
-                          style: MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                          style:
+                          MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
                             fontSize: 18.sp,
                             color: MyTheme.mauveColor,
                           ),
@@ -220,7 +226,8 @@ class _CartScreenState extends State<CartScreen> {
                         SizedBox(height: 20.h),
                         Text(
                           'Error: ${state.message}',
-                          style: MyTheme.lightTheme.textTheme.titleMedium?.copyWith(
+                          style: MyTheme.lightTheme.textTheme.titleMedium
+                              ?.copyWith(
                             fontSize: 18.sp,
                             color: MyTheme.redColor,
                           ),
@@ -229,20 +236,24 @@ class _CartScreenState extends State<CartScreen> {
                         SizedBox(height: 20.h),
                         ElevatedButton(
                           onPressed: () {
-                            context.read<CartBloc>().add(FetchCartEvent(userId: userId));
+                            context
+                                .read<CartBloc>()
+                                .add(FetchCartEvent(userId: userId));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: MyTheme.orangeColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30.w, vertical: 12.h),
                             elevation: 5,
                             shadowColor: MyTheme.orangeColor.withOpacity(0.4),
                           ),
                           child: Text(
                             'Retry',
-                            style: MyTheme.lightTheme.textTheme.displayMedium?.copyWith(
+                            style: MyTheme.lightTheme.textTheme.displayMedium
+                                ?.copyWith(
                               fontSize: 16.sp,
                             ),
                           ),
@@ -262,7 +273,8 @@ class _CartScreenState extends State<CartScreen> {
                       SizedBox(height: 15.h),
                       Text(
                         'Loading your cart...',
-                        style: MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                        style:
+                        MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
                           fontSize: 18.sp,
                           color: MyTheme.mauveColor,
                         ),
@@ -316,7 +328,8 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildCartList(BuildContext context, List<Datacart> dataCart, int userId, CartViewResponse cart) {
+  Widget _buildCartList(BuildContext context, List<Datacart> dataCart,
+      int userId, CartViewResponse cart) {
     List<Datacart> localCartItems = List.from(dataCart);
     double totalPrice = calculateTotalPrice(cart);
 
@@ -336,14 +349,23 @@ class _CartScreenState extends State<CartScreen> {
                       localCartItems.removeAt(index);
                       totalPrice = calculateTotalPrice(cart);
                     });
-                    context.read<CartBloc>().add(FetchCartEvent(userId: userId));
+                    context
+                        .read<CartBloc>()
+                        .add(FetchCartEvent(userId: userId));
                   }
                 },
                 builder: (context, state) {
-                  bool isLoading = state is DeleteCartItemLoadingState || state is AddToCartLoadingState;
+                  bool isLoading = state is DeleteCartItemLoadingState ||
+                      state is AddToCartLoadingState;
+                  double itemPrice =
+                      double.tryParse(item.itemsPrice ?? '0.0') ?? 0.0;
+                  int itemQuantity =
+                      int.tryParse(item.cartQuantity ?? '0') ?? 0;
+                  double totalItemPrice = itemPrice * itemQuantity;
+
                   return Container(
-                    margin: EdgeInsets.symmetric(vertical: 6.h), // تصغير المسافة بين الكروت
-                    padding: EdgeInsets.all(10.w), // تصغير الـ Padding
+                    margin: EdgeInsets.symmetric(vertical: 6.h),
+                    padding: EdgeInsets.all(10.w),
                     decoration: BoxDecoration(
                       color: MyTheme.whiteColor,
                       borderRadius: BorderRadius.circular(12.r),
@@ -364,53 +386,30 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.r),
-                          child: Stack(
-                            children: [
-                              item.itemsImage != null
-                                  ? CachedNetworkImage(
-                                imageUrl: item.itemsImage!,
-                                width: 70.w, // تصغير الصورة
-                                height: 60.h,
-                                fit: BoxFit.cover,
-                                memCacheHeight: (60.h).toInt(),
-                                memCacheWidth: (60.w).toInt(),
-                                placeholder: (context, url) => Center(
-                                  child: CircularProgressIndicator(
-                                    color: MyTheme.orangeColor,
-                                    strokeWidth: 2.w,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Icon(
-                                  Icons.fastfood_rounded,
-                                  size: 24.w,
-                                  color: MyTheme.orangeColor,
-                                ),
-                              )
-                                  : Icon(
-                                Icons.fastfood_rounded,
-                                size: 24.w,
+                          child: item.itemsImage != null
+                              ? CachedNetworkImage(
+                            imageUrl: item.itemsImage!,
+                            width: 70.w,
+                            height: 60.h,
+                            fit: BoxFit.cover,
+                            memCacheHeight: (60.h).toInt(),
+                            memCacheWidth: (60.w).toInt(),
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
                                 color: MyTheme.orangeColor,
+                                strokeWidth: 2.w,
                               ),
-                              Positioned(
-                                top: 4.h,
-                                right: 4.w,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
-                                  decoration: BoxDecoration(
-                                    color: MyTheme.orangeColor.withOpacity(0.9),
-                                    borderRadius: BorderRadius.circular(6.r),
-                                  ),
-                                  child: Text(
-                                    'Qty: ${item.cartQuantity ?? '0'}',
-                                    style: MyTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                                      fontSize: 9.sp,
-                                      color: MyTheme.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
+                            errorWidget: (context, url, error) => Icon(
+                              Icons.fastfood_rounded,
+                              size: 24.w,
+                              color: MyTheme.orangeColor,
+                            ),
+                          )
+                              : Icon(
+                            Icons.fastfood_rounded,
+                            size: 24.w,
+                            color: MyTheme.orangeColor,
                           ),
                         ),
                         SizedBox(width: 12.w),
@@ -421,8 +420,9 @@ class _CartScreenState extends State<CartScreen> {
                             children: [
                               Text(
                                 item.itemsName ?? 'No Name',
-                                style: MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
-                                  fontSize: 14.sp, // تصغير الخط
+                                style: MyTheme.lightTheme.textTheme.titleSmall
+                                    ?.copyWith(
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
                                   color: MyTheme.mauveColor,
                                 ),
@@ -430,47 +430,63 @@ class _CartScreenState extends State<CartScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(height: 6.h),
-                              Row(
-                                children: [
-                                  // Icon(
-                                  //   Icons.monetization_on_rounded,
-                                  //   size: 14.w,
-                                  //   color: MyTheme.greenColor,
-                                  // ),
-                                  // SizedBox(width: 4.w),
-                                  Text(
-                                    '${item.itemsPrice ?? '0.00'} EGP',
-                                    style: MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
-                                      fontSize: 12.sp, // تصغير الخط
-                                      color: MyTheme.greenColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                '${itemPrice.toStringAsFixed(2)} EGP',
+                                style: MyTheme.lightTheme.textTheme.titleSmall
+                                    ?.copyWith(
+                                  fontSize: 12.sp,
+                                  color: MyTheme.greenColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                'Qty: $itemQuantity',
+                                style: MyTheme.lightTheme.textTheme.bodySmall
+                                    ?.copyWith(
+                                  fontSize: 12.sp,
+                                  color: MyTheme.grayColor2,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                'Total: ${totalItemPrice.toStringAsFixed(2)} EGP',
+                                style: MyTheme.lightTheme.textTheme.titleSmall
+                                    ?.copyWith(
+                                  fontSize: 12.sp,
+                                  color: MyTheme.greenColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        // الأزرار
                         Row(
                           children: [
                             GestureDetector(
                               onTap: () {
                                 if (item.cartItemsid != null &&
-                                    (int.tryParse(item.cartQuantity ?? '0') ?? 0) > 1) {
-                                  context.read<CartBloc>().add(DeleteCartItemEvent(
+                                    (int.tryParse(item.cartQuantity ?? '0') ??
+                                        0) >
+                                        1) {
+                                  context
+                                      .read<CartBloc>()
+                                      .add(DeleteCartItemEvent(
                                     userId: userId,
                                     itemId: int.parse(item.cartItemsid!),
                                   ));
                                 } else if (item.cartItemsid != null) {
-                                  context.read<CartBloc>().add(DeleteCartItemEvent(
+                                  context
+                                      .read<CartBloc>()
+                                      .add(DeleteCartItemEvent(
                                     userId: userId,
                                     itemId: int.parse(item.cartItemsid!),
                                   ));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Cannot decrease quantity: Missing item ID'),
+                                      content: Text(
+                                          'Cannot decrease quantity: Missing item ID'),
                                       backgroundColor: Colors.redAccent,
                                       duration: Duration(seconds: 2),
                                     ),
@@ -493,7 +509,8 @@ class _CartScreenState extends State<CartScreen> {
                             SizedBox(width: 8.w),
                             Text(
                               item.cartQuantity ?? '0',
-                              style: MyTheme.lightTheme.textTheme.bodySmall?.copyWith(
+                              style: MyTheme.lightTheme.textTheme.bodySmall
+                                  ?.copyWith(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
                                 color: MyTheme.mauveColor,
@@ -511,7 +528,8 @@ class _CartScreenState extends State<CartScreen> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Cannot increase quantity: Missing item ID'),
+                                      content: Text(
+                                          'Cannot increase quantity: Missing item ID'),
                                       backgroundColor: Colors.redAccent,
                                       duration: Duration(seconds: 2),
                                     ),
@@ -537,14 +555,19 @@ class _CartScreenState extends State<CartScreen> {
                                   ? null
                                   : () {
                                 if (item.cartItemsid != null) {
-                                  context.read<CartBloc>().add(DeleteCartItemEvent(
+                                  context
+                                      .read<CartBloc>()
+                                      .add(DeleteCartItemEvent(
                                     userId: userId,
-                                    itemId: int.parse(item.cartItemsid!),
+                                    itemId:
+                                    int.parse(item.cartItemsid!),
                                   ));
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     const SnackBar(
-                                      content: Text('Cannot remove item: Missing item ID'),
+                                      content: Text(
+                                          'Cannot remove item: Missing item ID'),
                                       backgroundColor: Colors.redAccent,
                                       duration: Duration(seconds: 2),
                                     ),
@@ -597,12 +620,6 @@ class _CartScreenState extends State<CartScreen> {
             children: [
               Row(
                 children: [
-                  // Icon(
-                  //   Icons.monetization_on_rounded,
-                  //   size: 20.w,
-                  //   color: MyTheme.greenColor,
-                  // ),
-                  // SizedBox(width: 8.w),
                   Text(
                     '${totalPrice.toStringAsFixed(2)} EGP',
                     style: MyTheme.lightTheme.textTheme.titleMedium?.copyWith(
@@ -650,7 +667,8 @@ class _CartScreenState extends State<CartScreen> {
                 SnackBar(
                   content: Row(
                     children: [
-                      Icon(Icons.payment_rounded, color: MyTheme.whiteColor, size: 16.w),
+                      Icon(Icons.payment_rounded,
+                          color: MyTheme.whiteColor, size: 16.w),
                       SizedBox(width: 8.w),
                       Text('Proceed to checkout!'),
                     ],
@@ -728,14 +746,17 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 20.h),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/items');
+              Navigator.pushReplacementNamed(
+                context,
+                HomeScreen.routName,
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: MyTheme.orangeColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 8.h),
               elevation: 5,
               shadowColor: MyTheme.orangeColor.withOpacity(0.4),
             ),
@@ -767,3 +788,12 @@ class _CartScreenState extends State<CartScreen> {
     return totalPrice;
   }
 }
+
+
+
+
+
+
+
+
+
