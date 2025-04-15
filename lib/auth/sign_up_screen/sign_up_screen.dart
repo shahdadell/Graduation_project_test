@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // استوردنا عشان FilteringTextInputFormatter
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/App_Images/app_images.dart';
@@ -12,12 +13,13 @@ import 'package:graduation_project/auth/data/repository/auth_repository/data_sou
 import 'package:graduation_project/auth/data/repository/auth_repository/repository/auth_repository_impl.dart';
 import 'package:graduation_project/auth/domain/repository/repository/auth_repository_contract.dart';
 import 'package:graduation_project/auth/sign_up_screen/text_filed_siginup.dart';
+import 'package:graduation_project/functions/navigation.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 import 'cubit/register_screen_viewmodel.dart';
 import 'cubit/register_state.dart';
 
 class SignUpScreen extends StatefulWidget {
-  static const String routName = 'SignUpScreen';
+  static const String routeName = 'SignUpScreen';
   const SignUpScreen({super.key});
 
   @override
@@ -32,13 +34,13 @@ class SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    // checkToken(); // نعلق التحقق التلقائي مؤقتًا
+    // checkToken();
   }
 
   void checkToken() async {
     final token = AppLocalStorage.getData('token');
     if (token != null && token.isNotEmpty) {
-      Navigator.of(context).pushReplacementNamed(OtpScreen.routName);
+      pushWithReplacement(context, const OtpScreen());
     }
   }
 
@@ -57,9 +59,9 @@ class SignUpScreenState extends State<SignUpScreen> {
           DialogUtils.showMessage(context, state.response.message ?? '',
               posActionName: 'Ok', posAction: () {
             if (viewmodel.emailController.text.isNotEmpty) {
-              Navigator.of(context).pushReplacementNamed(
-                OtpScreen.routName,
-                arguments: viewmodel.emailController.text,
+              pushWithReplacement(
+                context,
+                OtpScreen(email: viewmodel.emailController.text),
               );
             } else {
               DialogUtils.showMessage(context, "Email is missing!");
@@ -71,14 +73,14 @@ class SignUpScreenState extends State<SignUpScreen> {
         appBar: AppBar(
           leading: InkWell(
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(MainScreen.routName);
+              pushWithReplacement(context, const MainScreen());
             },
             child: Padding(
-              padding: EdgeInsets.all(10.w), // تقليل الـ padding
+              padding: EdgeInsets.all(10.w),
               child: Icon(
                 Icons.arrow_back_ios,
                 color: MyTheme.blackColor,
-                size: 24.w, // تقليل حجم الأيقونة
+                size: 24.w,
               ),
             ),
           ),
@@ -89,32 +91,32 @@ class SignUpScreenState extends State<SignUpScreen> {
             style: Theme.of(context)
                 .textTheme
                 .titleMedium!
-                .copyWith(fontSize: 18.sp), // تقليل حجم العنوان
+                .copyWith(fontSize: 18.sp),
           ),
         ),
         body: Form(
           key: viewmodel.formKey,
           child: Padding(
-            padding: EdgeInsets.all(20.w), // تقليل الـ padding الكلي
+            padding: EdgeInsets.all(20.w),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Image.asset(
                     AppImages.sign,
-                    width: 140.w, // تقليل حجم الصورة
+                    width: 140.w,
                     height: 140.h,
                   ),
-                  SizedBox(height: 15.h), // تقليل المسافة
+                  SizedBox(height: 15.h),
                   Text(
                     "Email Address",
                     textAlign: TextAlign.start,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
-                        .copyWith(fontSize: 14.sp), // تقليل حجم النص
+                        .copyWith(fontSize: 14.sp),
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
                   TextFiledSignup(
                     text: 'User name / Email',
                     type: TextInputType.emailAddress,
@@ -134,16 +136,16 @@ class SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10.h), // تقليل المسافة
+                  SizedBox(height: 10.h),
                   Text(
                     "User Name",
                     textAlign: TextAlign.start,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
-                        .copyWith(fontSize: 14.sp), // تقليل حجم النص
+                        .copyWith(fontSize: 14.sp),
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
                   TextFiledSignup(
                     controller: viewmodel.userNameController,
                     text: 'User Name',
@@ -157,45 +159,76 @@ class SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10.h), // تقليل المسافة
+                  SizedBox(height: 10.h),
                   Text(
                     "Phone Number",
                     textAlign: TextAlign.start,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
-                        .copyWith(fontSize: 14.sp), // تقليل حجم النص
+                        .copyWith(fontSize: 14.sp),
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
                   TextFiledSignup(
                     controller: viewmodel.phoneController,
                     text: 'Phone Number',
                     icon: Icons.phone,
                     type: TextInputType.phone,
                     action: TextInputAction.done,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly, // يقبل أرقام فقط
+                      LengthLimitingTextInputFormatter(
+                          11), // الحد الأقصى 11 رقم
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Phone Number is required";
                       }
                       if (value.length < 11) {
-                        return "Phone Number must be at least 11 digits";
-                      }
-                      if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                        return "Phone Number must contain only digits";
+                        return "Phone Number Should Be At Least 11 Chars";
                       }
                       return null;
                     },
                   ),
-                  SizedBox(height: 10.h), // تقليل المسافة
+                  SizedBox(height: 10.h),
                   Text(
                     "Password",
                     textAlign: TextAlign.start,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
-                        .copyWith(fontSize: 14.sp), // تقليل حجم النص
+                        .copyWith(fontSize: 14.sp),
                   ),
-                  SizedBox(height: 4.h), // تقليل المسافة
+                  SizedBox(height: 4.h),
+                  // TextFiledSignup(
+                  //   controller: viewmodel.passwordController,
+                  //   text: 'Password',
+                  //   icon: Icons.lock,
+                  //   type: TextInputType.visiblePassword,
+                  //   action: TextInputAction.done,
+                  //   password: true,
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return "Password is required";
+                  //     }
+                  //     if (value.length < 8) {
+                  //       return "Password must be at least 8 characters long";
+                  //     }
+                  //     if (!RegExp(r'[a-z]').hasMatch(value)) {
+                  //       return "Password must contain at least one lowercase letter";
+                  //     }
+                  //     if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                  //       return "Password must contain at least one uppercase letter";
+                  //     }
+                  //     if (!RegExp(r'[0-9]').hasMatch(value)) {
+                  //       return "Password must contain at least one number";
+                  //     }
+                  //     if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                  //       return "Password must contain at least one special character";
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   TextFiledSignup(
                     controller: viewmodel.passwordController,
                     text: 'Password',
@@ -207,37 +240,23 @@ class SignUpScreenState extends State<SignUpScreen> {
                       if (value == null || value.isEmpty) {
                         return "Password is required";
                       }
-                      if (value.length < 8) {
-                        return "Password must be at least 8 characters long";
+                      if (value.length < 6) {
+                        return "Password Should Be At Least 6 Chars";
                       }
-                      // if (!RegExp(r'[a-z]').hasMatch(value)) {
-                      //   return "Password must contain at least one lowercase letter";
-                      // }
-                      // if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                      //   return "Password must contain at least one uppercase letter";
-                      // }
-                      // if (!RegExp(r'[0-9]').hasMatch(value)) {
-                      //   return "Password must contain at least one number";
-                      // }
-                      // if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                      //   return "Password must contain at least one special character";
-                      // }
                       return null;
                     },
                   ),
-                  SizedBox(height: 15.h), // تقليل المسافة
+                  SizedBox(height: 15.h),
                   ElevatedButton(
                     onPressed: () {
                       viewmodel.SignUp(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 6.h), // تقليل الـ padding
+                      padding: EdgeInsets.symmetric(vertical: 6.h),
                       backgroundColor: MyTheme.orangeColor,
-                      minimumSize:
-                          Size(double.infinity, 35.h), // تقليل ارتفاع الزر
+                      minimumSize: Size(double.infinity, 35.h),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r), // زوايا أنيقة
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
                     child: Text(
@@ -246,37 +265,37 @@ class SignUpScreenState extends State<SignUpScreen> {
                       style: Theme.of(context)
                           .textTheme
                           .displaySmall!
-                          .copyWith(fontSize: 13.sp), // تقليل حجم النص
+                          .copyWith(fontSize: 13.sp),
                     ),
                   ),
-                  SizedBox(height: 15.h), // تقليل المسافة
+                  SizedBox(height: 15.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 300.w, // تقليل العرض ليكون متكيف وأنيق
+                        width: 300.w,
                         child: Image.asset(
                           "assets/images/Separator2.png",
-                          fit: BoxFit.contain, // للتكيف مع الحجم
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h), // تقليل المسافة
+                  SizedBox(height: 10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InkWell(
                         onTap: () {},
                         child: Material(
-                          elevation: 3, // تقليل الظل لمظهر أنيق
+                          elevation: 3,
                           borderRadius: BorderRadius.circular(10.r),
                           shadowColor: Colors.black.withOpacity(0.2),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.r),
                             child: Image.asset(
                               AppImages.google,
-                              width: 40.w, // تقليل حجم الأيقونة
+                              width: 40.w,
                               height: 40.h,
                             ),
                           ),

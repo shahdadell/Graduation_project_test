@@ -59,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     padding:
-                    EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                        EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
                     elevation: 5,
                     shadowColor: MyTheme.orangeColor.withOpacity(0.4),
                   ),
@@ -193,7 +193,7 @@ class _CartScreenState extends State<CartScreen> {
                         Text(
                           'Loading your cart...',
                           style:
-                          MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                              MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
                             fontSize: 18.sp,
                             color: MyTheme.mauveColor,
                           ),
@@ -274,7 +274,7 @@ class _CartScreenState extends State<CartScreen> {
                       Text(
                         'Loading your cart...',
                         style:
-                        MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                            MyTheme.lightTheme.textTheme.titleSmall?.copyWith(
                           fontSize: 18.sp,
                           color: MyTheme.mauveColor,
                         ),
@@ -388,29 +388,29 @@ class _CartScreenState extends State<CartScreen> {
                           borderRadius: BorderRadius.circular(8.r),
                           child: item.itemsImage != null
                               ? CachedNetworkImage(
-                            imageUrl: item.itemsImage!,
-                            width: 70.w,
-                            height: 60.h,
-                            fit: BoxFit.cover,
-                            memCacheHeight: (60.h).toInt(),
-                            memCacheWidth: (60.w).toInt(),
-                            placeholder: (context, url) => Center(
-                              child: CircularProgressIndicator(
-                                color: MyTheme.orangeColor,
-                                strokeWidth: 2.w,
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Icon(
-                              Icons.fastfood_rounded,
-                              size: 24.w,
-                              color: MyTheme.orangeColor,
-                            ),
-                          )
+                                  imageUrl: item.itemsImage!,
+                                  width: 70.w,
+                                  height: 60.h,
+                                  fit: BoxFit.cover,
+                                  memCacheHeight: (60.h).toInt(),
+                                  memCacheWidth: (60.w).toInt(),
+                                  placeholder: (context, url) => Center(
+                                    child: CircularProgressIndicator(
+                                      color: MyTheme.orangeColor,
+                                      strokeWidth: 2.w,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => Icon(
+                                    Icons.fastfood_rounded,
+                                    size: 24.w,
+                                    color: MyTheme.orangeColor,
+                                  ),
+                                )
                               : Icon(
-                            Icons.fastfood_rounded,
-                            size: 24.w,
-                            color: MyTheme.orangeColor,
-                          ),
+                                  Icons.fastfood_rounded,
+                                  size: 24.w,
+                                  color: MyTheme.orangeColor,
+                                ),
                         ),
                         SizedBox(width: 12.w),
                         // التفاصيل
@@ -467,21 +467,21 @@ class _CartScreenState extends State<CartScreen> {
                               onTap: () {
                                 if (item.cartItemsid != null &&
                                     (int.tryParse(item.cartQuantity ?? '0') ??
-                                        0) >
+                                            0) >
                                         1) {
                                   context
                                       .read<CartBloc>()
                                       .add(DeleteCartItemEvent(
-                                    userId: userId,
-                                    itemId: int.parse(item.cartItemsid!),
-                                  ));
+                                        userId: userId,
+                                        itemId: int.parse(item.cartItemsid!),
+                                      ));
                                 } else if (item.cartItemsid != null) {
                                   context
                                       .read<CartBloc>()
                                       .add(DeleteCartItemEvent(
-                                    userId: userId,
-                                    itemId: int.parse(item.cartItemsid!),
-                                  ));
+                                        userId: userId,
+                                        itemId: int.parse(item.cartItemsid!),
+                                      ));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -521,10 +521,10 @@ class _CartScreenState extends State<CartScreen> {
                               onTap: () {
                                 if (item.cartItemsid != null) {
                                   context.read<CartBloc>().add(AddToCartEvent(
-                                    userId: userId,
-                                    itemId: int.parse(item.cartItemsid!),
-                                    quantity: 1,
-                                  ));
+                                        userId: userId,
+                                        itemId: int.parse(item.cartItemsid!),
+                                        quantity: 1,
+                                      ));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -554,26 +554,26 @@ class _CartScreenState extends State<CartScreen> {
                               onTap: isLoading
                                   ? null
                                   : () {
-                                if (item.cartItemsid != null) {
-                                  context
-                                      .read<CartBloc>()
-                                      .add(DeleteCartItemEvent(
-                                    userId: userId,
-                                    itemId:
-                                    int.parse(item.cartItemsid!),
-                                  ));
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Cannot remove item: Missing item ID'),
-                                      backgroundColor: Colors.redAccent,
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              },
+                                      if (item.cartItemsid != null) {
+                                        context
+                                            .read<CartBloc>()
+                                            .add(DeleteCartItemEvent(
+                                              userId: userId,
+                                              itemId:
+                                                  int.parse(item.cartItemsid!),
+                                            ));
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Cannot remove item: Missing item ID'),
+                                            backgroundColor: Colors.redAccent,
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                      }
+                                    },
                               child: Container(
                                 padding: EdgeInsets.all(5.w),
                                 decoration: BoxDecoration(
@@ -582,18 +582,18 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                                 child: isLoading
                                     ? SizedBox(
-                                  width: 18.w,
-                                  height: 18.w,
-                                  child: CircularProgressIndicator(
-                                    color: MyTheme.redColor,
-                                    strokeWidth: 2.w,
-                                  ),
-                                )
+                                        width: 18.w,
+                                        height: 18.w,
+                                        child: CircularProgressIndicator(
+                                          color: MyTheme.redColor,
+                                          strokeWidth: 2.w,
+                                        ),
+                                      )
                                     : Icon(
-                                  Icons.delete_rounded,
-                                  size: 18.w,
-                                  color: MyTheme.redColor,
-                                ),
+                                        Icons.delete_rounded,
+                                        size: 18.w,
+                                        color: MyTheme.redColor,
+                                      ),
                               ),
                             ),
                           ],
@@ -788,12 +788,3 @@ class _CartScreenState extends State<CartScreen> {
     return totalPrice;
   }
 }
-
-
-
-
-
-
-
-
-

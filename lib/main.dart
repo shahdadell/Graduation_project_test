@@ -56,8 +56,8 @@ class MyApp extends StatelessWidget {
             HomeScreen.routName: (context) => const HomeScreen(),
             MainScreen.routName: (context) => const MainScreen(),
             SignInScreen.routName: (context) => const SignInScreen(),
-            SignUpScreen.routName: (context) => const SignUpScreen(),
-            OtpScreen.routName: (context) => const OtpScreen(),
+            SignUpScreen.routeName: (context) => const SignUpScreen(),
+            OtpScreen.routeName: (context) => const OtpScreen(),
             SearchScreen.routeName: (context) => const SearchScreen(),
             OtpScreenForgetPassword.routName: (context) =>
                 const OtpScreenForgetPassword(),

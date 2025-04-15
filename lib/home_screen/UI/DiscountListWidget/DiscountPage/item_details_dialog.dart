@@ -9,11 +9,14 @@ import 'package:graduation_project/home_screen/bloc/Cart/cart_state.dart';
 import 'package:graduation_project/local_data/shared_preference.dart';
 
 void showItemDetailsDialog(BuildContext context, dynamic item) {
-  double originalPrice = double.tryParse(item.itemsPrice?.toString() ?? '0.0') ?? 0.0;
-  double discount = double.tryParse(item.itemsDiscount?.toString() ?? '0') ?? 0.0;
+  double originalPrice =
+      double.tryParse(item.itemsPrice?.toString() ?? '0.0') ?? 0.0;
+  double discount =
+      double.tryParse(item.itemsDiscount?.toString() ?? '0') ?? 0.0;
   double discountedPrice = originalPrice * (1 - (discount / 100));
   String restaurantName = item.serviceName ?? 'Unknown Restaurant';
-  double rating = double.tryParse(item.serviceRating?.toString() ?? '0.0') ?? 0.0;
+  double rating =
+      double.tryParse(item.serviceRating?.toString() ?? '0.0') ?? 0.0;
   String phoneNumber = item.servicePhone ?? 'Not Available';
   int quantity = 1; // متغير لتتبع الكمية في الـ Dialog
 
@@ -53,36 +56,36 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                   children: [
                     ClipRRect(
                       borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(20.r)),
+                          BorderRadius.vertical(top: Radius.circular(20.r)),
                       child: Stack(
                         children: [
                           SizedBox(
                             height: 160.h,
                             width: double.infinity,
                             child: item.itemsImage != null &&
-                                item.itemsImage!.isNotEmpty
+                                    item.itemsImage!.isNotEmpty
                                 ? Image.network(
-                              item.itemsImage!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.grey[300],
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    size: 50.w,
-                                    color: Colors.grey[500],
-                                  ),
-                                );
-                              },
-                            )
+                                    item.itemsImage!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          size: 50.w,
+                                          color: Colors.grey[500],
+                                        ),
+                                      );
+                                    },
+                                  )
                                 : Container(
-                              color: Colors.grey[300],
-                              child: Icon(
-                                Icons.broken_image,
-                                size: 50.w,
-                                color: Colors.grey[500],
-                              ),
-                            ),
+                                    color: Colors.grey[300],
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      size: 50.w,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
                           ),
                           Container(
                             height: 160.h,
@@ -106,7 +109,10 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                     horizontal: 6.w, vertical: 3.h),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [Colors.redAccent, Colors.red[700]!],
+                                    colors: [
+                                      Colors.redAccent,
+                                      Colors.red[700]!
+                                    ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
@@ -290,7 +296,8 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                 icon: Icons.favorite_border,
                                 color: Colors.redAccent,
                                 onTap: () {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
                                     SnackBar(
                                       content: Text(
                                         'Added to Favorites!',
@@ -299,7 +306,8 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                       backgroundColor: Colors.black87,
                                       behavior: SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10.r),
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
                                       ),
                                       duration: const Duration(seconds: 1),
                                     ),
@@ -355,7 +363,8 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                         backgroundColor: Colors.green,
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10.r),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
                                         ),
                                         duration: const Duration(seconds: 1),
                                       ),
@@ -371,7 +380,8 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                         backgroundColor: Colors.redAccent,
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10.r),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
                                         ),
                                         duration: const Duration(seconds: 2),
                                       ),
@@ -383,16 +393,19 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                   color: MyTheme.orangeColor,
                                   onTap: () {
                                     final userId =
-                                    AppLocalStorage.getData('user_id');
+                                        AppLocalStorage.getData('user_id');
                                     if (userId != null) {
                                       // استخدام itemsId فقط لأن العنصر مش جاي من الـ Cart
                                       final itemId = item.itemsId;
                                       if (itemId != null) {
-                                        context.read<CartBloc>().add(AddToCartEvent(
-                                          userId: userId,
-                                          itemId: int.parse(itemId.toString()),
-                                          quantity: quantity,
-                                        ));
+                                        context
+                                            .read<CartBloc>()
+                                            .add(AddToCartEvent(
+                                              userId: userId,
+                                              itemId:
+                                                  int.parse(itemId.toString()),
+                                              quantity: quantity,
+                                            ));
                                       } else {
                                         ScaffoldMessenger.of(dialogContext)
                                             .showSnackBar(
@@ -405,9 +418,10 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                              BorderRadius.circular(10.r),
+                                                  BorderRadius.circular(10.r),
                                             ),
-                                            duration: const Duration(seconds: 2),
+                                            duration:
+                                                const Duration(seconds: 2),
                                           ),
                                         );
                                       }
@@ -423,7 +437,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                            BorderRadius.circular(10.r),
+                                                BorderRadius.circular(10.r),
                                           ),
                                           duration: const Duration(seconds: 2),
                                         ),
@@ -440,7 +454,7 @@ void showItemDetailsDialog(BuildContext context, dynamic item) {
                     Container(
                       width: double.infinity,
                       padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                       decoration: BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey[300]!, width: 1),
@@ -497,7 +511,7 @@ Widget _buildActionButton({
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.3),
-            blurRadius:4.r,
+            blurRadius: 4.r,
             //spreadRadius: 1.r,
           ),
         ],

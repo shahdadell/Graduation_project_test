@@ -8,7 +8,8 @@ class SearchModelResponse {
   SearchModelResponse.fromJson(dynamic json) {
     status = json['status'];
     items = json['items'] != null ? Items.fromJson(json['items']) : null;
-    services = json['services'] != null ? Services.fromJson(json['services']) : null;
+    services =
+        json['services'] != null ? Services.fromJson(json['services']) : null;
   }
   String? status;
   Items? items;

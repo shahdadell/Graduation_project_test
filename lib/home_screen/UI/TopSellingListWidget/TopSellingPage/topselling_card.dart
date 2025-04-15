@@ -45,27 +45,27 @@ Widget buildTopCard(BuildContext context, dynamic item) {
             borderRadius: BorderRadius.horizontal(left: Radius.circular(12.r)),
             child: item.itemsImage != null && item.itemsImage!.isNotEmpty
                 ? Image.network(
-              item.itemsImage!,
-              height: 100.h,
-              width: 100.w,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 100.h,
-                  width: 100.w,
-                  color: Colors.grey[200],
-                  child: Icon(Icons.broken_image,
-                      size: 40.w, color: Colors.grey[400]),
-                );
-              },
-            )
+                    item.itemsImage!,
+                    height: 100.h,
+                    width: 100.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 100.h,
+                        width: 100.w,
+                        color: Colors.grey[200],
+                        child: Icon(Icons.broken_image,
+                            size: 40.w, color: Colors.grey[400]),
+                      );
+                    },
+                  )
                 : Container(
-              height: 100.h,
-              width: 100.w,
-              color: Colors.grey[200],
-              child: Icon(Icons.broken_image,
-                  size: 40.w, color: Colors.grey[400]),
-            ),
+                    height: 100.h,
+                    width: 100.w,
+                    color: Colors.grey[200],
+                    child: Icon(Icons.broken_image,
+                        size: 40.w, color: Colors.grey[400]),
+                  ),
           ),
           Expanded(
             child: Padding(
@@ -91,7 +91,8 @@ Widget buildTopCard(BuildContext context, dynamic item) {
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: Colors.grey[600],
-                          decoration: discount > 0 ? TextDecoration.lineThrough : null,
+                          decoration:
+                              discount > 0 ? TextDecoration.lineThrough : null,
                         ),
                       ),
                       SizedBox(width: 6.w),

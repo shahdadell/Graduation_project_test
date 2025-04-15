@@ -13,8 +13,11 @@ class CartViewResponse {
 
   CartViewResponse.fromJson(dynamic json) {
     status = json['status'];
-    restCafe = json['rest_cafe'] != null ? RestCafe.fromJson(json['rest_cafe']) : null;
-    hotelTourist = json['hotel_tourist'] != null ? HotelTourist.fromJson(json['hotel_tourist']) : null;
+    restCafe =
+        json['rest_cafe'] != null ? RestCafe.fromJson(json['rest_cafe']) : null;
+    hotelTourist = json['hotel_tourist'] != null
+        ? HotelTourist.fromJson(json['hotel_tourist'])
+        : null;
   }
   String? status;
   RestCafe? restCafe;
@@ -43,7 +46,9 @@ class HotelTourist {
   });
 
   HotelTourist.fromJson(dynamic json) {
-    countprice = json['countprice'] != null ? Countprice.fromJson(json['countprice']) : null;
+    countprice = json['countprice'] != null
+        ? Countprice.fromJson(json['countprice'])
+        : null;
     if (json['datacart'] != null) {
       datacart = [];
       json['datacart'].forEach((v) {
@@ -100,7 +105,9 @@ class RestCafe {
   });
 
   RestCafe.fromJson(dynamic json) {
-    countprice = json['countprice'] != null ? Countprice.fromJson(json['countprice']) : null;
+    countprice = json['countprice'] != null
+        ? Countprice.fromJson(json['countprice'])
+        : null;
     if (json['datacart'] != null) {
       datacart = [];
       json['datacart'].forEach((v) {

@@ -3,8 +3,9 @@
 
 class CartGetCountTimesResponse {
   CartGetCountTimesResponse({
-      this.status, 
-      this.quantity,});
+    this.status,
+    this.quantity,
+  });
 
   CartGetCountTimesResponse.fromJson(dynamic json) {
     status = json['status'];
@@ -19,5 +20,4 @@ class CartGetCountTimesResponse {
     map['quantity'] = quantity;
     return map;
   }
-
 }

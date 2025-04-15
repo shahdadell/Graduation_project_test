@@ -72,7 +72,8 @@ Widget buildTopSellingCard(BuildContext context, dynamic item) {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                 ),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(15.r)),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(15.r)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,15 +1,21 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_project/Home_Screen/UI/home_page/home_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:graduation_project/Theme/dialog_utils.dart';
+import 'package:graduation_project/Theme/dialogs.dart';
 import 'package:graduation_project/Theme/theme.dart';
+import 'package:graduation_project/Widgets/nav_bar_widget.dart';
 import 'package:graduation_project/auth/data/api/api_manager.dart';
 import 'package:graduation_project/auth/sign_up_screen/sign_up_screen.dart';
+import 'package:graduation_project/functions/navigation.dart';
 import 'text_filed_otp_screem.dart';
 
 class OtpScreen extends StatefulWidget {
-  static const String routName = 'otp';
-
-  const OtpScreen({super.key});
+  static const String routeName = 'otp';
+  final String? email;
+  const OtpScreen({super.key, this.email});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -58,12 +64,11 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dynamic arguments = ModalRoute.of(context)?.settings.arguments;
-    final String? email = arguments is String ? arguments : null;
+    final String? email = widget.email;
 
     if (email == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacementNamed(SignUpScreen.routName);
+        pushWithReplacement(context, const SignUpScreen());
       });
       return Scaffold(
         body: Center(
@@ -161,46 +166,62 @@ class _OtpScreenState extends State<OtpScreen> {
                 ElevatedButton(
                   onPressed: _isButtonEnabled
                       ? () async {
-                    print("OTP Continue Button Pressed");
+                          print("OTP Continue Button Pressed");
 
-                    if (formKey.currentState!.validate()) {
-                      String otpCode =
-                          "${otpController1.text}${otpController2.text}${otpController3.text}${otpController4.text}${otpController5.text}";
+                          if (formKey.currentState!.validate()) {
+                            String otpCode =
+                                "${otpController1.text}${otpController2.text}${otpController3.text}${otpController4.text}${otpController5.text}";
 
-                      print("Entered OTP: $otpCode");
+                            print("Entered OTP: $otpCode");
 
-                      var response =
-                      await apiManager.verifyCode(email, otpCode);
+                            showLoadingDialog(context);
+                            try {
+                              var response =
+                                  await apiManager.verifyCode(email, otpCode);
 
-                      print(
-                          "API Response: ${response.status}, Message: ${response.message}");
+                              print(
+                                  "API Response: ${response.status}, Message: ${response.message}");
 
-                      if (response.status == "success") {
-                        print(
-                            "Verification Successful! Navigating to Home...");
-                        Navigator.of(context)
-                            .pushReplacementNamed(HomeScreen.routName);
-                      } else {
-                        print("Verification Failed: ${response.message}");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(response.message ??
-                                "Verification failed"),
-                            backgroundColor: Colors.redAccent,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    }
-                  }
+                              if (response.status == "success") {
+                                print(
+                                    "Verification Successful! Navigating to NavBar...");
+                                DialogUtils.hideLoading(context);
+                                // مفيش userId ولا token في الـ response، فهنزيل التخزين
+                                DialogUtils.showMessage(
+                                  context,
+                                  response.message ?? "Verification Successful",
+                                  posActionName: 'Ok',
+                                  posAction: () {
+                                    // نتنقل للـ NavBarWidget مع التأكد إن الـ HomeScreen هي الصفحة الافتراضية
+                                    pushAndRemoveUntil(context,
+                                        const NavBarWidget(preIndex: 0));
+                                  },
+                                );
+                              } else {
+                                print(
+                                    "Verification Failed: ${response.message}");
+                                DialogUtils.hideLoading(context);
+                                DialogUtils.showMessage(
+                                  context,
+                                  response.message ?? "Verification failed",
+                                  posActionName: 'Ok',
+                                );
+                              }
+                            } catch (e) {
+                              print("Error during verification: $e");
+                              DialogUtils.hideLoading(context);
+                              DialogUtils.showMessage(
+                                context,
+                                "An error occurred: $e",
+                                posActionName: 'Ok',
+                              );
+                            }
+                          }
+                        }
                       : null,
                   style: ElevatedButton.styleFrom(
                     padding:
-                    EdgeInsets.symmetric(horizontal: 40.w, vertical: 14.h),
+                        EdgeInsets.symmetric(horizontal: 40.w, vertical: 14.h),
                     backgroundColor: MyTheme.orangeColor,
                     disabledBackgroundColor: Colors.grey[400],
                     shape: RoundedRectangleBorder(

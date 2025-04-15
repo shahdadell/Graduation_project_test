@@ -16,7 +16,8 @@ class CategoriesGridWidget extends StatelessWidget {
         if (state is FetchLoadingHomeDataState) {
           return Container(
             height: 150.h,
-            child: Center(child: CircularProgressIndicator(color: MyTheme.orangeColor)),
+            child: Center(
+                child: CircularProgressIndicator(color: MyTheme.orangeColor)),
           );
         } else if (state is FetchSuccessHomeDataState) {
           return Padding(
@@ -38,8 +39,11 @@ class CategoriesGridWidget extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ServicesScreen(
-                          categoryId: state.categories[index].categoriesId.toString(),
-                          categoryName: state.categories[index].categoriesName ?? 'Unknown',
+                          categoryId:
+                              state.categories[index].categoriesId.toString(),
+                          categoryName:
+                              state.categories[index].categoriesName ??
+                                  'Unknown',
                         ),
                       ),
                     );
@@ -99,7 +103,9 @@ class CategoriesGridWidget extends StatelessWidget {
         } else if (state is HomeErrorState) {
           return SizedBox(
             height: 150.h,
-            child: Center(child: Text("Error: ${state.message}", style: TextStyle(fontSize: 14.sp))),
+            child: Center(
+                child: Text("Error: ${state.message}",
+                    style: TextStyle(fontSize: 14.sp))),
           );
         }
         return const SizedBox.shrink();

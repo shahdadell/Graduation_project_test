@@ -190,7 +190,8 @@ class ServicesList extends StatelessWidget {
                                       onTap: () => showServiceDialog(
                                         context,
                                         "Phone Number",
-                                        service.servicePhone ?? "No Phone Number",
+                                        service.servicePhone ??
+                                            "No Phone Number",
                                       ),
                                     ),
                                   if (service.serviceWebsite != null)
@@ -261,6 +262,7 @@ class ServicesList extends StatelessWidget {
       },
     );
   }
+
   Widget _buildChip({
     required String label,
     required IconData icon,

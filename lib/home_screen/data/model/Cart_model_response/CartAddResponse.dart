@@ -4,9 +4,10 @@
 
 class CartAddResponse {
   CartAddResponse({
-      this.success, 
-      this.message, 
-      this.quantity,});
+    this.success,
+    this.message,
+    this.quantity,
+  });
 
   CartAddResponse.fromJson(dynamic json) {
     success = json['success'];
@@ -24,5 +25,4 @@ class CartAddResponse {
     map['quantity'] = quantity;
     return map;
   }
-
 }

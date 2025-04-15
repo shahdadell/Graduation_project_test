@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:graduation_project/API_Services/dio_provider.dart';
 import 'package:graduation_project/API_Services/endpoints.dart';
-import 'package:graduation_project/local_data/shared_preference.dart';
 import '../model/Cart_model_response/CartAddResponse.dart';
 import '../model/Cart_model_response/CartGetCountTimesResponse.dart';
 import '../model/Cart_model_response/CartViewResponse.dart';
@@ -15,7 +14,7 @@ class CartRepo {
     int quantity = 1,
   }) async {
     try {
-      final String endpoint = AppEndpoints.addToCart;
+      const String endpoint = AppEndpoints.addToCart;
       final FormData formData = FormData.fromMap({
         'usersid': userId.toString(),
         'itemsid': itemId.toString(),
@@ -59,7 +58,7 @@ class CartRepo {
     required int itemId,
   }) async {
     try {
-      final String endpoint = AppEndpoints.cartCount;
+      const String endpoint = AppEndpoints.cartCount;
       final FormData formData = FormData.fromMap({
         'usersid': userId.toString(),
         'itemsid': itemId.toString(),
@@ -101,7 +100,7 @@ class CartRepo {
     required int userId,
   }) async {
     try {
-      final String endpoint = AppEndpoints.viewCart;
+      const String endpoint = AppEndpoints.viewCart;
       final FormData formData = FormData.fromMap({
         'usersid': userId.toString(),
       });
@@ -142,7 +141,7 @@ class CartRepo {
     required int itemId,
   }) async {
     try {
-      final String endpoint = AppEndpoints.cartDelete;
+      const String endpoint = AppEndpoints.cartDelete;
       final FormData formData = FormData.fromMap({
         'usersid': userId.toString(),
         'itemsid': itemId.toString(),
