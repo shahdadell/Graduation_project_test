@@ -7,7 +7,8 @@ import 'package:graduation_project/home_screen/UI/SearchFieldWidget/SearchFieldW
 import 'package:graduation_project/home_screen/bloc/Home/home_bloc.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_event.dart';
 import 'package:graduation_project/home_screen/bloc/Home/home_state.dart';
-import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart' as searchModel;
+import 'package:graduation_project/home_screen/data/model/search_model_response/SearchModelResponse.dart'
+    as searchModel;
 import 'package:graduation_project/home_screen/UI/SearchFieldWidget/SearchResultCard.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -57,12 +58,13 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: MyTheme.whiteColor,
       appBar: AppBar(
-       // backgroundColor: Colors.transparent,
+        // backgroundColor: Colors.transparent,
         leading: InkWell(
           onTap: () => Navigator.pop(context),
           child: Padding(
             padding: EdgeInsets.all(12.w),
-            child: Icon(Icons.arrow_back_ios, color: MyTheme.whiteColor, size: 24.w),
+            child: Icon(Icons.arrow_back_ios,
+                color: MyTheme.whiteColor, size: 24.w),
           ),
         ),
         title: Text(
@@ -98,7 +100,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 print('Current State: $state'); // للتصحيح
                 if (state is FetchSearchLoadingState) {
                   return Center(
-                    child: CircularProgressIndicator(color: MyTheme.orangeColor),
+                    child:
+                        CircularProgressIndicator(color: MyTheme.orangeColor),
                   );
                 } else if (state is FetchSearchSuccessState) {
                   if (state.services.isEmpty && state.items.isEmpty) {
@@ -122,7 +125,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: Container(
                       color: MyTheme.whiteColor,
                       child: ListView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 8.h),
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: allResults.length,
                         itemBuilder: (context, index) {

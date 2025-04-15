@@ -57,7 +57,8 @@ class ItemsGrid extends StatelessWidget {
               final item = homeState.items[index];
               return GestureDetector(
                 onTap: () {
-                  showItemDetailsDialog(context, item); // فتح الـ Dialog لما تضغطي
+                  showItemDetailsDialog(
+                      context, item); // فتح الـ Dialog لما تضغطي
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -86,41 +87,42 @@ class ItemsGrid extends StatelessWidget {
                               borderRadius: BorderRadius.vertical(
                                   top: Radius.circular(15.r)),
                               child: item.itemsImage != null &&
-                                  item.itemsImage!.isNotEmpty
+                                      item.itemsImage!.isNotEmpty
                                   ? Image.network(
-                                item.itemsImage!,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    return child;
-                                  }
-                                  return Container(
-                                    color: Colors.grey[200],
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: MyTheme.orangeColor,
-                                        strokeWidth: 2.w,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[200],
-                                    child: Icon(Icons.broken_image,
-                                        size: 50.w,
-                                        color: Colors.grey[400]),
-                                  );
-                                },
-                              )
+                                      item.itemsImage!,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return Container(
+                                          color: Colors.grey[200],
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              color: MyTheme.orangeColor,
+                                              strokeWidth: 2.w,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          color: Colors.grey[200],
+                                          child: Icon(Icons.broken_image,
+                                              size: 50.w,
+                                              color: Colors.grey[400]),
+                                        );
+                                      },
+                                    )
                                   : Container(
-                                width: double.infinity,
-                                color: Colors.grey[200],
-                                child: Icon(Icons.broken_image,
-                                    size: 50.w, color: Colors.grey[400]),
-                              ),
+                                      width: double.infinity,
+                                      color: Colors.grey[200],
+                                      child: Icon(Icons.broken_image,
+                                          size: 50.w, color: Colors.grey[400]),
+                                    ),
                             ),
                             if (item.itemsDiscount != null &&
                                 item.itemsDiscount! > 0)
@@ -219,7 +221,8 @@ class ItemsGrid extends StatelessWidget {
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                BorderRadius.circular(10.r)),
+                                                    BorderRadius.circular(
+                                                        10.r)),
                                             duration: Duration(seconds: 1),
                                           ),
                                         );
@@ -231,7 +234,8 @@ class ItemsGrid extends StatelessWidget {
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.grey.withOpacity(0.3),
+                                              color:
+                                                  Colors.grey.withOpacity(0.3),
                                               blurRadius: 4.r,
                                               spreadRadius: 1.r,
                                             ),
@@ -251,7 +255,8 @@ class ItemsGrid extends StatelessWidget {
                                     SizedBox(width: 6.w),
                                     GestureDetector(
                                       onTap: () {
-                                        showItemDetailsDialog(context, item); // فتح الـ Dialog بدل ما تضيفي للسلة مباشرة
+                                        showItemDetailsDialog(context,
+                                            item); // فتح الـ Dialog بدل ما تضيفي للسلة مباشرة
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(5.w),
@@ -260,7 +265,8 @@ class ItemsGrid extends StatelessWidget {
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.grey.withOpacity(0.3),
+                                              color:
+                                                  Colors.grey.withOpacity(0.3),
                                               blurRadius: 4.r,
                                               spreadRadius: 1.r,
                                             ),

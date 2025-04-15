@@ -140,7 +140,7 @@ class MainScreen extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           Navigator.of(context)
-                              .pushNamed(SignUpScreen.routName);
+                              .pushNamed(SignUpScreen.routeName);
                         },
                         child: Text(
                           " Sign Up",

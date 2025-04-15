@@ -51,31 +51,35 @@ class _SearchFieldWidgetState extends State<SearchFieldWidget> {
                 }
               },
               onChanged: (value) {
-                widget.onSearch?.call(value); // بيبعت النص مباشرة لدالة onSearch
-                setState(() {}); // عشان يعمل Refresh للـ UI ويظهر/يخفي الـ Clear Button
+                widget.onSearch
+                    ?.call(value); // بيبعت النص مباشرة لدالة onSearch
+                setState(
+                    () {}); // عشان يعمل Refresh للـ UI ويظهر/يخفي الـ Clear Button
               },
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: MyTheme.blackColor,
-                fontSize: 16.sp,
-              ),
+                    color: MyTheme.blackColor,
+                    fontSize: 16.sp,
+                  ),
               decoration: InputDecoration(
                 hintText: "What are you looking for?",
                 hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: MyTheme.grayColor2,
-                  fontSize: 13.sp,
-                ),
+                      color: MyTheme.grayColor2,
+                      fontSize: 13.sp,
+                    ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 10.h), // أو bottom فقط حسب الشكل اللي يريحك
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 10.h), // أو bottom فقط حسب الشكل اللي يريحك
                 suffixIcon: _controller.text.isNotEmpty
                     ? IconButton(
-                  icon: Icon(Icons.clear, color: MyTheme.grayColor2, size: 20.sp),
-                  onPressed: () {
-                    _controller.clear();
-                    widget.onSearch?.call('');
-                    setState(() {});
-                  },
-                )
+                        icon: Icon(Icons.clear,
+                            color: MyTheme.grayColor2, size: 20.sp),
+                        onPressed: () {
+                          _controller.clear();
+                          widget.onSearch?.call('');
+                          setState(() {});
+                        },
+                      )
                     : null,
               ),
             ),

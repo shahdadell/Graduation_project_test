@@ -15,7 +15,6 @@ import '../../bloc/Cart/cart_event.dart';
 import '../../bloc/Cart/cart_state.dart';
 import '../../data/repo/cart_repo.dart';
 
-
 Widget homeTopBar(BuildContext context) {
   String greeting = getGreetingMessage();
   final int? userId = AppLocalStorage.getData('user_id');
@@ -70,7 +69,7 @@ Widget homeTopBar(BuildContext context) {
                       return const Text('Loading...');
                     }
                     String displayName =
-                    userId == null ? "" : (snapshot.data ?? "Guest");
+                        userId == null ? "" : (snapshot.data ?? "Guest");
                     return SizedBox(
                       width: 142,
                       child: Text(
@@ -115,7 +114,8 @@ Widget homeTopBar(BuildContext context) {
               onTap: () {
                 if (userId == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please log in to view your cart')),
+                    const SnackBar(
+                        content: Text('Please log in to view your cart')),
                   );
                 } else {
                   Navigator.push(

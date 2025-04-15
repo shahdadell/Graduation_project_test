@@ -19,7 +19,8 @@ class DiscountCard extends StatelessWidget {
       },
       child: Container(
         width: 140.w,
-        margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h), // قللنا الـ margin الرأسي
+        margin: EdgeInsets.symmetric(
+            horizontal: 8.w, vertical: 2.h), // قللنا الـ margin الرأسي
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
           gradient: LinearGradient(
@@ -61,7 +62,8 @@ class DiscountCard extends StatelessWidget {
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   color: Colors.grey[200],
-                  child: Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
+                  child: Icon(Icons.broken_image,
+                      size: 30.w, color: Colors.grey[400]),
                 );
               },
             ),

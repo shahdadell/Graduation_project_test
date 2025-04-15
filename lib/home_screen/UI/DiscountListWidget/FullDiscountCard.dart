@@ -39,7 +39,8 @@ class FullDiscountCard extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             return Container(
               color: Colors.grey[200],
-              child: Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
+              child:
+                  Icon(Icons.broken_image, size: 30.w, color: Colors.grey[400]),
             );
           },
         ),

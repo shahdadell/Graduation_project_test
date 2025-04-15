@@ -55,33 +55,33 @@ class TopSellingListWidget extends StatelessWidget {
               );
             } else if (state is FetchTopSellingSuccessState) {
               print("Top Selling Items Loaded: ${state.topSelling.length}");
-              final itemCount = state.topSelling.length > 4 ? 5 : state.topSelling.length;
+              final itemCount =
+                  state.topSelling.length > 4 ? 5 : state.topSelling.length;
               return SizedBox(
                 height: 200.h,
                 child: state.topSelling.isEmpty
                     ? Center(
-                  child: Text(
-                    "Nothing Hot Yet!",
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      color: Colors.grey[500],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
-
+                        child: Text(
+                          "Nothing Hot Yet!",
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: 15.w),
-                  itemCount: itemCount,
-                  itemBuilder: (context, index) {
-                    if (index == 4 && state.topSelling.length > 4) {
-                      return _buildShowMoreCard(context);
-                    }
-                    final item = state.topSelling[index];
-                    return buildTopSellingCard(context, item);
-                  },
-                ),
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        itemCount: itemCount,
+                        itemBuilder: (context, index) {
+                          if (index == 4 && state.topSelling.length > 4) {
+                            return _buildShowMoreCard(context);
+                          }
+                          final item = state.topSelling[index];
+                          return buildTopSellingCard(context, item);
+                        },
+                      ),
               );
             } else if (state is FetchTopSellingErrorState) {
               print("Top Selling Error: ${state.message}");
@@ -181,7 +181,9 @@ class TopSellingListWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const AllTopSellingPage()), // التنقل لصفحة Top Selling
+          MaterialPageRoute(
+              builder: (context) =>
+                  const AllTopSellingPage()), // التنقل لصفحة Top Selling
         );
       },
       child: Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // استوردنا عشان FilteringTextInputFormatter
 import 'package:graduation_project/Theme/theme.dart';
 
 class TextFiledSignup extends StatefulWidget {
@@ -9,6 +10,7 @@ class TextFiledSignup extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final bool password;
+  final List<TextInputFormatter>? inputFormatters; // أضفنا inputFormatters
 
   const TextFiledSignup({
     super.key,
@@ -19,6 +21,7 @@ class TextFiledSignup extends StatefulWidget {
     required this.controller,
     required this.validator,
     this.password = false,
+    this.inputFormatters, // أضفنا inputFormatters
   });
 
   @override
@@ -26,14 +29,13 @@ class TextFiledSignup extends StatefulWidget {
 }
 
 class _TextFiledSignupState extends State<TextFiledSignup> {
-  bool isObscured = true; // Initial state for password visibility
+  bool isObscured = true;
 
   void togglePasswordVisibility() {
     setState(() {
       isObscured = !isObscured;
     });
 
-    // Hide password automatically after 1 second for extra security
     if (!isObscured) {
       Future.delayed(const Duration(seconds: 1), () {
         setState(() {
@@ -53,6 +55,7 @@ class _TextFiledSignupState extends State<TextFiledSignup> {
       controller: widget.controller,
       keyboardType: widget.type,
       textInputAction: widget.action,
+      inputFormatters: widget.inputFormatters, // أضفنا inputFormatters
       decoration: InputDecoration(
         label: Text(
           widget.text,

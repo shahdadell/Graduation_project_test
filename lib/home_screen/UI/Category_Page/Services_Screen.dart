@@ -23,7 +23,7 @@ class ServicesScreen extends StatelessWidget {
     final int parsedCategoryId = int.tryParse(categoryId) ?? 0;
     return BlocProvider(
       create: (context) =>
-      HomeBloc()..add(FetchServicesEvent(parsedCategoryId)),
+          HomeBloc()..add(FetchServicesEvent(parsedCategoryId)),
       child: Scaffold(
         appBar: ServicesAppBar(categoryName: categoryName),
         body: Container(
@@ -41,7 +41,8 @@ class ServicesScreen extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: ServicesFloatingButton(categoryId: parsedCategoryId),
+        floatingActionButton:
+            ServicesFloatingButton(categoryId: parsedCategoryId),
       ),
     );
   }

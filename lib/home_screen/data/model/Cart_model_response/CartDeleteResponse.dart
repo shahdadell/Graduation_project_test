@@ -3,8 +3,9 @@
 
 class CartDeleteResponse {
   CartDeleteResponse({
-      this.success, 
-      this.message,});
+    this.success,
+    this.message,
+  });
 
   CartDeleteResponse.fromJson(dynamic json) {
     success = json['success'];
@@ -19,5 +20,4 @@ class CartDeleteResponse {
     map['message'] = message;
     return map;
   }
-
 }

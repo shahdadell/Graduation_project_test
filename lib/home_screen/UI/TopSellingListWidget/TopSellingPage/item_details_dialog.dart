@@ -12,7 +12,8 @@ import 'package:graduation_project/local_data/shared_preference.dart';
 void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
   if (item is! TopSellingData) {
     if (kDebugMode) {
-      print("Error: Item is not of type TopSellingData - Type: ${item.runtimeType}");
+      print(
+          "Error: Item is not of type TopSellingData - Type: ${item.runtimeType}");
     }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -71,7 +72,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20.r)),
                       child: Stack(
                         children: [
                           SizedBox(
@@ -79,30 +81,30 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                             width: double.infinity,
                             child: itemImage.isNotEmpty
                                 ? Image.network(
-                              itemImage,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                if (kDebugMode) {
-                                  print("Image load error: $error");
-                                }
-                                return Container(
-                                  color: Colors.grey[300],
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    size: 50.w,
-                                    color: Colors.grey[500],
-                                  ),
-                                );
-                              },
-                            )
+                                    itemImage,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      if (kDebugMode) {
+                                        print("Image load error: $error");
+                                      }
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          size: 50.w,
+                                          color: Colors.grey[500],
+                                        ),
+                                      );
+                                    },
+                                  )
                                 : Container(
-                              color: Colors.grey[300],
-                              child: Icon(
-                                Icons.broken_image,
-                                size: 50.w,
-                                color: Colors.grey[500],
-                              ),
-                            ),
+                                    color: Colors.grey[300],
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      size: 50.w,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
                           ),
                           Container(
                             height: 160.h,
@@ -126,7 +128,10 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                     horizontal: 6.w, vertical: 3.h),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [Colors.redAccent, Colors.red[700]!],
+                                    colors: [
+                                      Colors.redAccent,
+                                      Colors.red[700]!
+                                    ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
@@ -330,7 +335,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                 icon: Icons.favorite_border,
                                 color: Colors.redAccent,
                                 onTap: () {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
                                     SnackBar(
                                       content: Text(
                                         'Added to Favorites!',
@@ -339,7 +345,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                       backgroundColor: Colors.black87,
                                       behavior: SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10.r),
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
                                       ),
                                       duration: const Duration(seconds: 1),
                                     ),
@@ -385,7 +392,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                               BlocListener<CartBloc, CartState>(
                                 listener: (context, state) {
                                   if (state is AddToCartSuccessState) {
-                                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                    ScaffoldMessenger.of(dialogContext)
+                                        .showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           'Added to Cart!',
@@ -394,13 +402,15 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                         backgroundColor: Colors.green,
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10.r),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
                                         ),
                                         duration: const Duration(seconds: 1),
                                       ),
                                     );
                                   } else if (state is AddToCartErrorState) {
-                                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                    ScaffoldMessenger.of(dialogContext)
+                                        .showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           'Failed to add to cart: ${state.message}',
@@ -409,7 +419,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                         backgroundColor: Colors.redAccent,
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10.r),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
                                         ),
                                         duration: const Duration(seconds: 2),
                                       ),
@@ -420,17 +431,22 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                   icon: Icons.add_shopping_cart,
                                   color: MyTheme.orangeColor,
                                   onTap: () {
-                                    final userId = AppLocalStorage.getData('user_id');
+                                    final userId =
+                                        AppLocalStorage.getData('user_id');
                                     if (userId != null) {
                                       final itemId = item.itemsId;
                                       if (itemId != null) {
-                                        context.read<CartBloc>().add(AddToCartEvent(
-                                          userId: userId,
-                                          itemId: int.parse(itemId.toString()),
-                                          quantity: quantity,
-                                        ));
+                                        context
+                                            .read<CartBloc>()
+                                            .add(AddToCartEvent(
+                                              userId: userId,
+                                              itemId:
+                                                  int.parse(itemId.toString()),
+                                              quantity: quantity,
+                                            ));
                                       } else {
-                                        ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                        ScaffoldMessenger.of(dialogContext)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               'Cannot add to cart: Missing item ID',
@@ -439,14 +455,17 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                             backgroundColor: Colors.redAccent,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10.r),
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
                                             ),
-                                            duration: const Duration(seconds: 2),
+                                            duration:
+                                                const Duration(seconds: 2),
                                           ),
                                         );
                                       }
                                     } else {
-                                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                      ScaffoldMessenger.of(dialogContext)
+                                          .showSnackBar(
                                         SnackBar(
                                           content: Text(
                                             'Please log in to add to cart',
@@ -455,7 +474,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                                           backgroundColor: Colors.redAccent,
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
                                           ),
                                           duration: const Duration(seconds: 2),
                                         ),
@@ -471,7 +491,8 @@ void showItemDetailsDialogTopSelling(BuildContext context, dynamic item) {
                     ),
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                       decoration: BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey[300]!, width: 1),

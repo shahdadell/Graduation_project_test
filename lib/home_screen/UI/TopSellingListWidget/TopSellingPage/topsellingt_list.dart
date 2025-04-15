@@ -26,7 +26,7 @@ class TopSellingList extends StatelessWidget {
         } else if (state is FetchTopSellingSuccessState) {
           if (kDebugMode) {
             print(
-              "Items in FetchTopSellingSuccessState: ${state.topSelling.length}");
+                "Items in FetchTopSellingSuccessState: ${state.topSelling.length}");
           }
           if (state.topSelling.isEmpty) {
             return _buildEmptyState();
